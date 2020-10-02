@@ -1,4 +1,4 @@
-import { MenuItem } from "../components/menu/menu.component";
+import { MenuItem } from "../components/menu/menu";
 
 import HelloWorld from '../components/hello-world/hello-world';
 
