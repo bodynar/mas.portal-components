@@ -26,7 +26,7 @@ export default function App(): JSX.Element {
                     <header className="mb-2">
                         <Menu items={menuItems} />
                     </header>
-                    <main className="container">
+                    <main className="container-fluid">
                         <Switch>
                             <Route exact path="/">
                                 <Home />

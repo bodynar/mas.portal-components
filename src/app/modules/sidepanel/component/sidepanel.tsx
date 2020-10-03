@@ -11,8 +11,8 @@ type SidePanelBackground =
     | 'BlueNight' | 'AmbrosiaIvory';
 
 export type SidePanelItem = {
-    icon?: string;
     name: string;
+    icon?: string;
     tooltip?: string;
 };
 
@@ -46,9 +46,9 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
         getFontColor(backgroundColor);
 
     return (
-        <div className="side-panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
-            <h4>{props.caption}</h4>
-            <hr />
+        <div className="side-panel mr-2" style={{ backgroundColor: backgroundColor, color: fontColor }}>
+            <h4 className="side-panel__caption">{props.caption}</h4>
+            <hr style={{ borderTopColor: fontColor }} />
             <ul className="side-panel__items">
                 {mappedMenuItems.map(item => generateSidePanelItem(item))}
             </ul>
@@ -59,13 +59,13 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
 const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
     if (isNullOrUndefined(item.icon)) {
         return (
-            <li key={item.uid}>
+            <li key={item.uid} className="side-panel__items__item side-panel__items__item--no-icon">
                 {item.name}
             </li>
         );
     } else {
         return (
-            <li key={item.uid}>
+            <li key={item.uid} className="side-panel__items__item">
                 <i className={`fas fa-${item.icon}`} />
                 {item.name}
             </li>

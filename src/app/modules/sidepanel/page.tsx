@@ -18,16 +18,20 @@ export default function SidePanelPage(): JSX.Element {
                 tooltip: ''
             },
             {
+                name: 'Snooring',
+                // icon: 'bed',
+            },
+            {
                 name: 'Courses',
                 icon: 'user-graduate',
                 tooltip: ''
-            }
+            },
         ];
 
     return (
-        <div>
+        <div style={{ display: 'flex' }}>
             <SidePanel
-                background='MidnightBadger'
+                background='BlueNight'
                 caption={`Test sidePanel`}
                 items={sidePanelItems}
                 onItemClick={emptyFn}
