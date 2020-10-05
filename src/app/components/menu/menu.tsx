@@ -1,9 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React from "react";
+
+import "./menu.scss";
 
 import { Link, useLocation } from "react-router-dom";
 
-import generateUid from '../../common/uid';
+import generateUid from "../../common/uid";
 
 export type MenuItem = {
     name: string;
@@ -30,15 +32,15 @@ export default function Menu(props: MenuProps = defaultMenuProps): JSX.Element {
     const { pathname } = useLocation();
 
     return (
-        <nav className='navbar navbar-light navbar-expand-lg' style={{ backgroundColor: '#e3f2fd' }}>
-            <button className='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarText' aria-controls='navbarText' aria-expanded='false' aria-label='Toggle navigation'>
-                <span className='navbar-toggler-icon'></span>
+        <nav className="app-navbar navbar navbar-light navbar-expand-lg" style={{ backgroundColor: "#e3f2fd" }}>
+            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span className="navbar-toggler-icon"></span>
             </button>
-            <div className='collapse navbar-collapse' id='navbarText'>
-                <ul className='navbar-nav mr-auto'>
-                    <li className='nav-item'>
+            <div className="collapse navbar-collapse" id="navbarText">
+                <ul className="navbar-nav mr-auto">
+                    <li className="nav-item">
                         <Link
-                            className={(pathname === '/' ? 'active ' : '') + 'nav-link'}
+                            className={(pathname === "/" ? "active " : "") + "nav-link"}
                             to="/"
                         >
                             Home
@@ -46,10 +48,10 @@ export default function Menu(props: MenuProps = defaultMenuProps): JSX.Element {
                     </li>
 
                     {mappedMenuItems.map(item =>
-                        <li className='nav-item' key={item.uid}>
+                        <li className="nav-item" key={item.uid}>
                             <Link
-                                className={(item.enabled ? '' : 'disabled ') + (pathname === `/${item.uri}` ? 'active ' : '') + 'nav-link'}
-                                to={'/' + item.uri}
+                                className={(item.enabled ? "" : "disabled ") + (pathname === `/${item.uri}` ? "active " : "") + "nav-link"}
+                                to={"/" + item.uri}
                             >
                                 {item.name}
                             </Link>

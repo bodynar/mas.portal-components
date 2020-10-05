@@ -1,6 +1,10 @@
 .app {
     position: relative;
 
+    .app-header {
+        margin-bottom: 4.5em;
+    }
+
     &__loading-cover {
         position: absolute;
         bottom: 0;
