@@ -23,7 +23,7 @@ export default function App(): JSX.Element {
                     <img src="loading-02.svg" alt="Loading" />
                 </div>
                 <div className={`app__contnet${isLoading ? " app__content--loading" : ""}`}>
-                    <header className="mb-2">
+                    <header className="app-header">
                         <Menu items={menuItems} />
                     </header>
                     <main className="container-fluid">
