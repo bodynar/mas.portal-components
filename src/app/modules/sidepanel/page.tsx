@@ -12,24 +12,21 @@ export default function SidePanelPage(): JSX.Element {
             {
                 name: 'Messaging',
                 icon: 'fax',
-                tooltip: '',
+            },
+            {
+                name: 'Gamification courses',
             },
             {
                 name: 'Contacts',
                 icon: 'address-card',
-                tooltip: ''
             },
             {
                 name: 'Snooring',
-                // icon: 'bed',
+                icon: 'bed',
             },
             {
                 name: 'Courses',
                 icon: 'user-graduate',
-                tooltip: ''
-            },
-            {
-                name: 'Gamification courses'
             }
         ];
 
@@ -37,7 +34,7 @@ export default function SidePanelPage(): JSX.Element {
         <div className="side-panel__container">
             <SidePanel
                 background='ShadowPurple'
-                caption={`Test sidePanel`}
+                caption={`Test sidePanel with few items`}
                 items={sidePanelItems}
                 onItemClick={emptyFn}
             />

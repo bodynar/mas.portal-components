@@ -84,18 +84,13 @@ const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Elem
 };
 
 const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
-    if (isNullOrUndefined(item.icon)) {
-        return (
-            <li key={item.uid} className="side-panel__item side-panel__item--no-icon">
-                <span>{item.name}</span>
-            </li>
-        );
-    } else {
-        return (
-            <li key={item.uid} className="side-panel__item">
-                <i className={`fas fa-${item.icon}`} />
-                <span>{item.name}</span>
-            </li>
-        );
-    }
+    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon': '';
+    const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
+    
+    return (
+        <li key={item.uid} className={`side-panel__item${elementClass}`}>
+            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)}/>
+            <span>{item.name}</span>
+        </li>
+    );
 };
