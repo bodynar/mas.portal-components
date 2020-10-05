@@ -8,7 +8,8 @@ import generateUid from '../../../common/uid';
 
 type SidePanelBackground =
     'ShadowPurple' | 'MidnightBadger' | 'MarineBlue'
-    | 'BlueNight' | 'AmbrosiaIvory';
+    | 'BlueNight' | 'AmbrosiaIvory' | 'Risotto' | 'JerauPejuang'
+    | 'MyrtleGreen';
 
 export type SidePanelItem = {
     name: string;
@@ -25,11 +26,14 @@ export type SidePanelProps = {
 };
 
 const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBackground, string>([
-    ['ShadowPurple', '#462B45'],
-    ['MidnightBadger', '#575965'],
-    ['MarineBlue', '#043353'],
-    ['BlueNight', '#323846'],
-    ['AmbrosiaIvory', '#FFF4EA'],
+    ['ShadowPurple', '462B45'],
+    ['MidnightBadger', '575965'],
+    ['MarineBlue', '043353'],
+    ['BlueNight', '323846'],
+    ['AmbrosiaIvory', 'FFF4EA'],
+    ['Risotto', 'F7F4E7'],
+    ['JerauPejuang', '762014'],
+    ['MyrtleGreen', '275A53'],
 ]);
 
 export default function SidePanel(props: SidePanelProps): JSX.Element {
@@ -40,7 +44,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
         }));
 
     const backgroundColor: string =
-        backgroundColorMap.get(props.background)!;
+        `#${backgroundColorMap.get(props.background)}`;
 
     const fontColor: string =
         getFontColor(backgroundColor);

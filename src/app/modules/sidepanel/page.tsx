@@ -33,7 +33,7 @@ export default function SidePanelPage(): JSX.Element {
     return (
         <div className="side-panel__container">
             <SidePanel
-                background='BlueNight'
+                background='ShadowPurple'
                 caption={`Test sidePanel`}
                 items={sidePanelItems}
                 onItemClick={emptyFn}
