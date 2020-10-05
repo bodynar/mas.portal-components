@@ -37,6 +37,8 @@ const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBa
 ]);
 
 export default function SidePanel(props: SidePanelProps): JSX.Element {
+    const [state, setState] = React.useState<boolean>(props.expanded || true);
+
     const mappedMenuItems: Array<SidePanelItem & { uid: string }> =
         props.items.map(menuItem => ({
             ...menuItem,
@@ -49,29 +51,50 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
     const fontColor: string =
         getFontColor(backgroundColor);
 
+    const className: string =
+        state ? ' side-panel--expanded' : '';
+
     return (
-        <div className="side-panel mr-2" style={{ backgroundColor: backgroundColor, color: fontColor }}>
-            <h4 className="side-panel__caption">{props.caption}</h4>
+        <div className={`side-panel${className}`} style={{ backgroundColor: backgroundColor, color: fontColor }}>
+            {/* <h4 className="side-panel__caption">{props.caption}</h4> */}
             <hr style={{ borderTopColor: fontColor }} />
             <ul className="side-panel__items">
                 {mappedMenuItems.map(item => generateSidePanelItem(item))}
             </ul>
+            {generateExpander(state, () => setState(!state))}
         </div>
     );
+};
+
+const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Element => {
+    const content =
+        expanded
+            ? (<div className="side-panel__expander-menu" onClick={clickHandler}>
+                <span>Collapse</span>
+                <i className="fas fa-angle-double-left" />
+            </div>)
+            : (<div className="side-panel__expander-menu" onClick={clickHandler}>
+                <i className="fas fa-angle-double-right" />
+            </div>);
+
+    return (
+        <div className="side-panel__expander" onClick={clickHandler}>
+            {content}
+        </div>);
 };
 
 const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
     if (isNullOrUndefined(item.icon)) {
         return (
-            <li key={item.uid} className="side-panel__items__item side-panel__items__item--no-icon">
-                {item.name}
+            <li key={item.uid} className="side-panel__item side-panel__item--no-icon">
+                <span>{item.name}</span>
             </li>
         );
     } else {
         return (
-            <li key={item.uid} className="side-panel__items__item">
+            <li key={item.uid} className="side-panel__item">
                 <i className={`fas fa-${item.icon}`} />
-                {item.name}
+                <span>{item.name}</span>
             </li>
         );
     }

@@ -28,6 +28,9 @@ export default function SidePanelPage(): JSX.Element {
                 icon: 'user-graduate',
                 tooltip: ''
             },
+            {
+                name: 'Gamification courses'
+            }
         ];
 
     return (
