@@ -1,8 +1,9 @@
 .side-panel {
-
-    width: 10vw;
-    min-width: 15em;
-
+    width: 15em;
+    position: fixed;
+    z-index: 1;
+    bottom: 0;
+    top: 3.5em;
     padding: 1.5em 0;
 
     &__caption {

@@ -2,7 +2,9 @@
     position: relative;
 
     .app-header {
-        margin-bottom: 4.5em;
+        margin-bottom: 3.5em;
+        position: relative;
+        z-index: 1;
     }
 
     &__loading-cover {

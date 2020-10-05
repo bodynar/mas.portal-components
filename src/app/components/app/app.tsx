@@ -26,7 +26,7 @@ export default function App(): JSX.Element {
                     <header className="app-header">
                         <Menu items={menuItems} />
                     </header>
-                    <main className="container-fluid">
+                    <main className="container-fluid" style={{ paddingLeft: 0 }}>
                         <Switch>
                             <Route exact path="/">
                                 <Home />
