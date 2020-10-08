@@ -18,9 +18,9 @@ export type SidePanelItem = {
 };
 
 export type SidePanelProps = {
-    caption: string;
     background: SidePanelBackground;
     items: Array<SidePanelItem>;
+    children: JSX.Element;
     onItemClick: (name: string) => void;
     expanded?: boolean;
 };
@@ -54,14 +54,22 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
     const className: string =
         state ? ' side-panel--expanded' : '';
 
+    // TODO: Fix item height transition on collapse
+
     return (
-        <div className={`side-panel${className}`} style={{ backgroundColor: backgroundColor, color: fontColor }}>
-            {/* <h4 className="side-panel__caption">{props.caption}</h4> */}
-            <hr style={{ borderTopColor: fontColor }} />
-            <ul className="side-panel__items">
-                {mappedMenuItems.map(item => generateSidePanelItem(item))}
-            </ul>
-            {generateExpander(state, () => setState(!state))}
+        <div className={`side-panel${className}`}>
+            <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
+                <hr style={{ borderTopColor: fontColor }} />
+                <ul className="side-panel__items">
+                    {mappedMenuItems.map(item => generateSidePanelItem(item))}
+                </ul>
+                {generateExpander(state, () => setState(!state))}
+            </aside>
+            <main className="side-panel__content-container">
+                <div className="side-panel__side-content">
+                    {props.children}
+                </div>
+            </main>
         </div>
     );
 };
@@ -84,12 +92,12 @@ const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Elem
 };
 
 const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
-    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon': '';
+    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
     const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
-    
+
     return (
         <li key={item.uid} className={`side-panel__item${elementClass}`}>
-            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)}/>
+            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
             <span>{item.name}</span>
         </li>
     );
