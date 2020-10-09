@@ -54,8 +54,11 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
     const className: string =
         state ? ' side-panel--expanded' : '';
 
-    // TODO: Fix item height transition on collapse
-
+    // TODO: add container for items, like Link or <a>
+    
+    // items shaking on expand actions cuz of react render, it toggles --expand class so its not transition, its re-render
+    // todo: if can - redo whole panel with checkbox (not state)
+    
     return (
         <div className={`side-panel${className}`}>
             <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
