@@ -4,7 +4,6 @@ import './sidepanel.scss';
 
 import { isNullOrUndefined } from '../../../common/utils';
 import { getFontColor } from '../../../common/color';
-import generateUid from '../../../common/uid';
 
 type SidePanelBackground =
     'ShadowPurple' | 'MidnightBadger' | 'MarineBlue'
@@ -12,6 +11,7 @@ type SidePanelBackground =
     | 'MyrtleGreen';
 
 export type SidePanelItem = {
+    uid: string;
     name: string;
     icon?: string;
     tooltip?: string;
@@ -39,12 +39,6 @@ const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBa
 export default function SidePanel(props: SidePanelProps): JSX.Element {
     const [state, setState] = React.useState<boolean>(props.expanded || true);
 
-    const mappedMenuItems: Array<SidePanelItem & { uid: string }> =
-        props.items.map(menuItem => ({
-            ...menuItem,
-            uid: generateUid()
-        }));
-
     const backgroundColor: string =
         `#${backgroundColorMap.get(props.background)}`;
 
@@ -53,18 +47,13 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
 
     const className: string =
         state ? ' side-panel--expanded' : '';
-
-    // TODO: add container for items, like Link or <a>
-    
-    // items shaking on expand actions cuz of react render, it toggles --expand class so its not transition, its re-render
-    // todo: if can - redo whole panel with checkbox (not state)
     
     return (
         <div className={`side-panel${className}`}>
             <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
                 <hr style={{ borderTopColor: fontColor }} />
                 <ul className="side-panel__items">
-                    {mappedMenuItems.map(item => generateSidePanelItem(item))}
+                    {props.items.map(item => generateSidePanelItem(item))}
                 </ul>
                 {generateExpander(state, () => setState(!state))}
             </aside>
@@ -99,7 +88,7 @@ const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Eleme
     const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
 
     return (
-        <li key={item.uid} className={`side-panel__item${elementClass}`}>
+        <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
             <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
             <span>{item.name}</span>
         </li>

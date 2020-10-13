@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { emptyFn } from '../../common/utils';
+import generateUid from '../../common/uid';
 
 import SidePanel, { SidePanelItem } from './component/sidepanel';
 
@@ -26,7 +27,7 @@ export default function SidePanelPage(): JSX.Element {
                 name: 'Courses',
                 icon: 'user-graduate',
             }
-        ];
+        ].map(item => ({ ...item, uid: generateUid() }));
 
     return (
         <div className="side-panel__container">

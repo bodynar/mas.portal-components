@@ -30,13 +30,14 @@ $transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 	&__item {
 		font-size: 1.25em;
 		padding: 0.5em 1em;
-		max-height: 3em;
+		max-height: 2.5em;
 
 		cursor: pointer;
 		user-select: none;
 		text-transform: capitalize;
 
-		transition: 0.125s ease background-color;
+		transition: 0.125s ease background-color,
+			$transition max-height;
 		display: flex;
 		align-items: center;
 		overflow: hidden;
@@ -63,7 +64,7 @@ $transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 		}
 
 		span {
-			display: none;
+			opacity: 0;
 		}
 	}
 
@@ -82,7 +83,7 @@ $transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 			cursor: pointer;
 
 			span {
-				display: none;
+				opacity: 0;
 
 				font-size: 20px;
 				flex: 1;
@@ -109,11 +110,10 @@ $transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 
 				.side-panel {
 					&__item {
-						width: 12em;
 						max-height: 5em;
 
 						span {
-							display: inline;
+							opacity: 1;
 						}
 					}
 
@@ -124,7 +124,7 @@ $transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 							align-items: baseline;
 
 							span {
-								display: inline;
+								opacity: 1;
 							}
 						}
 					}
