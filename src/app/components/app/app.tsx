@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import './app.scss';
 
-import { getMenuItems } from '../../common/utils';
+import { getMenuItems } from '../../common/menu';
 import generateUid from '../../common/uid';
 
 import Home from '../home/home';
