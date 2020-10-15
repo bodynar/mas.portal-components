@@ -47,7 +47,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
 
     const className: string =
         state ? ' side-panel--expanded' : '';
-    
+
     return (
         <div className={`side-panel${className}`}>
             <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
@@ -83,14 +83,15 @@ const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Elem
         </div>);
 };
 
-const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
-    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
-    const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
+const generateSidePanelItem =
+    (item: SidePanelItem & { uid: string }, generator?: (item: SidePanelItem) => JSX.Element): JSX.Element => {
+        const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
+        const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
 
-    return (
-        <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
-            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
-            <span>{item.name}</span>
-        </li>
-    );
-};
+        return (
+            <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
+                <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
+                <span>{item.name}</span>
+            </li>
+        );
+    };
