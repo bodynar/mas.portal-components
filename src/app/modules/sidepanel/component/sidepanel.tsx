@@ -4,6 +4,7 @@ import './sidepanel.scss';
 
 import { isNullOrUndefined } from '../../../common/utils';
 import { getFontColor } from '../../../common/color';
+import generateUid from '../../../common/uid';
 
 type SidePanelBackground =
     'ShadowPurple' | 'MidnightBadger' | 'MarineBlue'
@@ -11,7 +12,6 @@ type SidePanelBackground =
     | 'MyrtleGreen';
 
 export type SidePanelItem = {
-    uid: string;
     name: string;
     icon?: string;
     tooltip?: string;
@@ -36,8 +36,18 @@ const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBa
     ['MyrtleGreen', '275A53'],
 ]);
 
+type SidepanelState = {
+    expanded: boolean;
+    items: Array<SidePanelItem & { uid: string }>;
+};
+
 export default function SidePanel(props: SidePanelProps): JSX.Element {
-    const [state, setState] = React.useState<boolean>(props.expanded || true);
+    const [state, setState] = React.useState<SidepanelState>({
+        expanded: props.expanded || true,
+        items: props.items.map(x => ({ ...x, uid: generateUid() }))
+    });
+
+    const toggleExpanded: () => void = () => setState({ ...state, expanded: !state.expanded });
 
     const backgroundColor: string =
         `#${backgroundColorMap.get(props.background)}`;
@@ -46,16 +56,16 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
         getFontColor(backgroundColor);
 
     const className: string =
-        state ? ' side-panel--expanded' : '';
+        state.expanded ? ' side-panel--expanded' : '';
 
     return (
         <div className={`side-panel${className}`}>
             <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
                 <hr style={{ borderTopColor: fontColor }} />
                 <ul className="side-panel__items">
-                    {props.items.map(item => generateSidePanelItem(item))}
+                    {state.items.map(item => generateSidePanelItem(item))}
                 </ul>
-                {generateExpander(state, () => setState(!state))}
+                {generateExpander(state.expanded, toggleExpanded)}
             </aside>
             <main className="side-panel__content-container">
                 <div className="side-panel__side-content">
@@ -67,7 +77,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
 };
 
 const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Element => {
-    const content =
+    const content: JSX.Element =
         expanded
             ? (<div className="side-panel__expander-menu" onClick={clickHandler}>
                 <span>Collapse</span>
@@ -83,15 +93,14 @@ const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Elem
         </div>);
 };
 
-const generateSidePanelItem =
-    (item: SidePanelItem & { uid: string }, generator?: (item: SidePanelItem) => JSX.Element): JSX.Element => {
-        const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
-        const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
+const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
+    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
+    const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
 
-        return (
-            <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
-                <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
-                <span>{item.name}</span>
-            </li>
-        );
-    };
+    return (
+        <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
+            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
+            <span>{item.name}</span>
+        </li>
+    );
+};
