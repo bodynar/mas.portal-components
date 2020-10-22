@@ -4,6 +4,8 @@ import './addComment.scss';
 
 import generateUid from '../../../../common/uid';
 
+import Button from '../../../../shared/components/button/button';
+
 export type AddCommentProps = {
     isOpen: boolean;
     isResponse?: boolean;
@@ -20,7 +22,6 @@ type AddCommentState = {
 
 // TODO:
 // 2. Resolve old TODOs
-// 4. Create button component
 
 export default function AddComment(props: AddCommentProps): JSX.Element {
     const [addCommentState, setState] = useState<AddCommentState>({
@@ -79,7 +80,8 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
                             </div>
                             : null}
                         <Button
-                            buttonType={ButtonType.Default}
+                            className="add-comment__add-button"
+                            buttonType={'Primary'}
                             caption={btnAddTitle}
                             onButtonClick={() => addCommentState.comment.length > 0 ? onAddCommentClick() : null}
                         />
