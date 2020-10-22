@@ -12,26 +12,28 @@ export type AddCommentProps = {
 };
 
 type AddCommentState = {
+    uid: string;
     isOpen: boolean;
     hideMask: boolean;
     comment: string;
 };
 
 // TODO:
-// 1. Move uid to parent (check is uid changing)
 // 2. Resolve old TODOs
 // 4. Create button component
 
 export default function AddComment(props: AddCommentProps): JSX.Element {
-    const uid: string = generateUid();
-
-    const [addCommentState, setState] = useState<AddCommentState>({ isOpen: props.isOpen, hideMask: false, comment: '' });
-    const onInputClick: () => void = () => setState({ ...addCommentState, isOpen: !addCommentState.isOpen });
+    const [addCommentState, setState] = useState<AddCommentState>({
+        uid: generateUid(),
+        isOpen: props.isOpen,
+        hideMask: false,
+        comment: ''
+    });
 
     const onAddCommentClick: () => void = (): void => {
         props.onAddCommentClick(addCommentState.comment);
 
-        document.querySelector(`#${uid} div.pseudo-input`)!.innerHTML = '';
+        document.querySelector(`#${addCommentState.uid} div.pseudo-input`)!.innerHTML = '';
 
         // (old) TODO: Handle add => clear input
         setState({
@@ -92,7 +94,7 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
 
     return (
         <section
-            id={uid}
+            id={addCommentState.uid}
             className="add-comment"
         >
             {componentContent}
