@@ -43,6 +43,12 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
         });
     };
 
+    const onNotExpandedInputClick: () => void = (): void => {
+        if (!addCommentState.isOpen) {
+            setState({ ...addCommentState, isOpen: true });
+        }
+    };
+
     // (old) TODO: Fix deleting multi-line comment
     const onInputHandler = (event: React.FormEvent<HTMLDivElement>): void => {
         setState({
