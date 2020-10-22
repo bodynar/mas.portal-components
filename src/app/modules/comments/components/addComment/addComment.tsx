@@ -5,6 +5,7 @@ import './addComment.scss';
 import generateUid from '../../../../common/uid';
 
 import Button from '../../../../shared/components/button/button';
+import { isNullOrUndefined } from '../../../../common/utils';
 
 export type AddCommentProps = {
     isOpen: boolean;
@@ -18,25 +19,28 @@ type AddCommentState = {
     isOpen: boolean;
     hideMask: boolean;
     comment: string;
+    ref: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 // TODO:
-// 2. Resolve old TODOs
+// 1. ref - is it ok to set manually?
 
 export default function AddComment(props: AddCommentProps): JSX.Element {
     const [addCommentState, setState] = useState<AddCommentState>({
         uid: generateUid(),
         isOpen: props.isOpen,
         hideMask: false,
-        comment: ''
+        comment: '',
+        ref: React.useRef(null)
     });
 
     const onAddCommentClick: () => void = (): void => {
         props.onAddCommentClick(addCommentState.comment);
 
-        document.querySelector(`#${addCommentState.uid} div.pseudo-input`)!.innerHTML = '';
+        if (!isNullOrUndefined(addCommentState.ref.current)) {
+            addCommentState.ref.current.innerHTML = "";
+        }
 
-        // (old) TODO: Handle add => clear input
         setState({
             ...addCommentState,
             comment: '',
@@ -50,14 +54,29 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
         }
     };
 
-    // (old) TODO: Fix deleting multi-line comment
-    const onInputHandler = (event: React.FormEvent<HTMLDivElement>): void => {
-        setState({
-            ...addCommentState,
-            comment: event.currentTarget.innerText,
-            hideMask: addCommentState.hideMask || event.currentTarget.innerText.length !== 0
-        });
-    }
+    const onInputHandler: (event: React.FormEvent<HTMLDivElement>) => void =
+        (event: React.FormEvent<HTMLDivElement>): void => {
+            const comment: string = event.currentTarget.innerText.trimEnd();
+
+            setState({
+                ...addCommentState,
+                comment: comment,
+                hideMask: comment.length !== 0
+            });
+        };
+
+    const onPasteHandler: (event: React.ClipboardEvent<HTMLDivElement>) => void =
+        (event: React.ClipboardEvent<HTMLDivElement>): void => {
+            const clipboardText: string =
+                event.clipboardData.getData("text/plain")
+                    .trimEnd();
+
+            event.preventDefault();
+
+            if (document.queryCommandSupported('insertText')) {
+                document.execCommand('insertText', false, clipboardText);
+            }
+        };
 
     const btnAddTitle: string =
         props.isResponse === true ? 'Response' : 'Add';
@@ -66,12 +85,22 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
 
     if (addCommentState.isOpen) {
         componentContent = (
-            <div className={`add-comment__container ${addCommentState.hideMask ? 'add-comment__container--not-empty' : ''}`}>
+            <div className={`add-comment__container${addCommentState.hideMask ? ' add-comment__container--not-empty' : ''}`}>
                 <div className="add-comment__pseudo-input-mask">
                     <span>Add your comment..</span>
                 </div>
                 <div className="add-comment__pseudo-input-container">
-                    <div className="add-comment__pseudo-input" contentEditable="true" onInput={onInputHandler} ref={input => input && input.focus()}>
+                    <div
+                        className="add-comment__pseudo-input"
+                        contentEditable="true"
+                        onInput={onInputHandler}
+                        onPaste={onPasteHandler}
+                        ref={element => {
+                            element && element.focus();
+
+                            addCommentState.ref.current = element;
+                        }}
+                    >
                     </div>
                     <div className="add-comment__pseudo-input-actions">
                         {props.onCancelClick ?
