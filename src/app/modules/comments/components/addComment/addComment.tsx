@@ -20,7 +20,6 @@ type AddCommentState = {
 // TODO:
 // 1. Move uid to parent (check is uid changing)
 // 2. Resolve old TODOs
-// 3. Rename css classes
 // 4. Create button component
 
 export default function AddComment(props: AddCommentProps): JSX.Element {
@@ -58,16 +57,16 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
 
     if (addCommentState.isOpen) {
         componentContent = (
-            <div className={`add-comment-container ${addCommentState.hideMask ? 'not-empty' : ''}`}>
-                <div className="pseudo-input-mask">
+            <div className={`add-comment__container ${addCommentState.hideMask ? 'add-comment__container--not-empty' : ''}`}>
+                <div className="add-comment__pseudo-input-mask">
                     <span>Add your comment..</span>
                 </div>
-                <div className="pseudo-input-container">
-                    <div className="pseudo-input" contentEditable="true" onInput={onInputHandler} ref={input => input && input.focus()}>
+                <div className="add-comment__pseudo-input-container">
+                    <div className="add-comment__pseudo-input" contentEditable="true" onInput={onInputHandler} ref={input => input && input.focus()}>
                     </div>
-                    <div className="pseudo-input-actions">
+                    <div className="add-comment__pseudo-input-actions">
                         {props.onCancelClick ?
-                            <div className="cancel" onClick={props.onCancelClick}>
+                            <div className="add-comment__cancel-button" onClick={props.onCancelClick}>
                                 <span>Cancel</span>
                             </div>
                             : null}
@@ -83,8 +82,8 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
     }
     else {
         componentContent = (
-            <div className="add-comment-container mask" onClick={onInputClick}>
-                <div className="pseudo-input-mask">
+            <div className="add-comment__container add-comment__container--is-mask" onClick={onNotExpandedInputClick}>
+                <div className="add-comment__pseudo-input-mask">
                     <span>Add your comment..</span>
                 </div>
             </div>
