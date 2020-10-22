@@ -1,6 +1,7 @@
 import React from 'react';
 
 import generateUid from '../../../common/uid';
+import { isNullOrEmpty } from '../../../common/utils';
 
 type ButtonType = 
     'Custom' | 'Primary' | 'Secondary' |
@@ -12,6 +13,7 @@ export type ButtonProps = {
     buttonType: ButtonType;
     onButtonClick: () => void;
     isOutlined?: boolean;
+    className?: string;
 };
 
 const typeClassNameMap: Map<ButtonType, string> =
@@ -33,10 +35,14 @@ export default function Button(props: ButtonProps) {
     const type: string =
         typeClassNameMap.get(props.buttonType) || '';
 
-    const className: string =
+    let className: string =
         type === ''
             ? ''
             : (props.isOutlined || false) ? `btn-outline-${type}`: `btn-${type}`;
+
+    if (!isNullOrEmpty(props.className)) {
+        className += ` ${props.className}`;
+    }
 
     return (
         <button
