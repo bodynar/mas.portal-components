@@ -22,9 +22,6 @@ type AddCommentState = {
     ref: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-// TODO:
-// 1. ref - is it ok to set manually?
-
 export default function AddComment(props: AddCommentProps): JSX.Element {
     const [addCommentState, setState] = useState<AddCommentState>({
         uid: generateUid(),
