@@ -41,6 +41,10 @@ type SidepanelState = {
     items: Array<SidePanelItem & { uid: string }>;
 };
 
+// TODO:
+// 1. Scrollbar (many items)
+// 2. Active state (selected item)
+
 export default function SidePanel(props: SidePanelProps): JSX.Element {
     const [state, setState] = React.useState<SidepanelState>({
         expanded: props.expanded || true,
