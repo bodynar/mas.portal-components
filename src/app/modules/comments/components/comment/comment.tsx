@@ -9,7 +9,6 @@ import AddComment from '../addComment/addComment';
 
 export type CommentProps = {
     comment: ExtendedCommentItem;
-    enableResponseTree: boolean;
     maxDeepLevel: number;
     onAddCommentClick: (comment: string, responseTo: string) => void;
 };
@@ -53,7 +52,7 @@ export default function Comment(props: CommentProps): JSX.Element {
     return (
         <div className={`comment-container${deepLevelClassName}`} key={commentState.comment.id}>
             <div className="comment-container__info">
-                <span>{commentState.comment.author.name}</span>
+                <span>{commentState.comment.author.displayName}</span>
                 <span title={commentState.comment.date.toString()}>{postedTime}</span>
             </div>
             <div className="comment-container__content">
@@ -76,8 +75,7 @@ export default function Comment(props: CommentProps): JSX.Element {
                         />
                 }
             </div>
-            {props.enableResponseTree
-                && displayResponsesIfExists(props.maxDeepLevel, commentState.comment, toggleResponses, props.onAddCommentClick)}
+            {displayResponsesIfExists(props.maxDeepLevel, commentState.comment, toggleResponses, props.onAddCommentClick)}
         </div>
     );
 };
@@ -95,14 +93,13 @@ const displayResponsesIfExists = (
         // todo: comment inline
         return (
             <>
-                {comment.responses.map(response => 
+                {comment.responses.map(response =>
                     <Comment
                         key={response.id}
                         comment={response}
-                        enableResponseTree={false}
                         maxDeepLevel={maxDeepLevel}
                         onAddCommentClick={onAddCommentClick}
-                    />    
+                    />
                 )}
             </>
         );
@@ -126,7 +123,6 @@ const displayResponsesIfExists = (
                             <Comment
                                 key={response.id}
                                 maxDeepLevel={maxDeepLevel}
-                                enableResponseTree={true}
                                 comment={response}
                                 onAddCommentClick={onAddCommentClick}
                             />

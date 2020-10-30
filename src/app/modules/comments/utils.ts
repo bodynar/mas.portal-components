@@ -21,6 +21,21 @@ export const mapCommentsToExtendedModel = (comments: Array<CommentItem>): Array<
     return result;
 };
 
+const EN_US = ['second', 'minute', 'hour', 'day', 'week', 'month', 'year'];
+
+export const timeAgoCustomDictionary = (diff: number, idx: number): [string, string] => {
+    if (idx === 0) {
+        return ['just now', 'just now'];
+    }
+    let unit = EN_US[Math.floor(idx / 2)];
+
+    if (diff > 1) {
+        unit += 's';
+    }
+
+    return [`${diff} ${unit} ago`, `${diff} ${unit} ago`];
+};
+
 const attachResponseComments = (parentComments: Array<ExtendedCommentItem>, responseComments: Array<CommentItem>): Array<CommentItem> => {
     const attachedComments: Array<string> = [];
 

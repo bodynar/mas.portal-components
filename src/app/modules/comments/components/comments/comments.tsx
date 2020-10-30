@@ -1,8 +1,16 @@
 import React from 'react';
 
-import Comment from '../comment/comment';
+import * as timeago from 'timeago.js';
 
-import { mapCommentsToExtendedModel } from '../../utils';
+import './comments.scss';
+
+import { isNullOrUndefined } from '../../../../common/utils';
+
+import Comment from '../comment/comment';
+import AddComment from '../addComment/addComment';
+import FlatComment from '../flatComment/flatComment';
+
+import { mapCommentsToExtendedModel, timeAgoCustomDictionary } from '../../utils';
 import CommentItem, { ExtendedCommentItem } from '../../types';
 
 // TODO:
@@ -11,34 +19,75 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
-    displayComments: 'flat' | 'tree';
-    maxDeepLevel: number;
-    onAddCommentClick: (comment: string, responseTo: string) => void;
+    // displayCommentsMode: 'flat' | 'tree';
+    // maxDeepLevel: number;
+    // onAddCommentClick: (comment: string, responseTo?: string) => void;
+    onAddCommentClick: (comment: string) => void;
+    className?: string;
 };
-
-type CommentsState = {
-    comments: Array<ExtendedCommentItem>;
-    maxDeepLevel: number;
-    displayComments: 'flat' | 'tree';
-}
 
 export default function Comments(props: CommentsProps): JSX.Element {
-    const [commentsState, setState] = React.useState<CommentsState>({
-        ...props,
-        comments: mapCommentsToExtendedModel(props.comments),
-    });
+    const className: string =
+        isNullOrUndefined(props.className) ? `` : `comments-container--default`;
+
+    timeago.register('test', timeAgoCustomDictionary);
 
     return (
-        <div>
-            {commentsState.comments.map(comment => 
-                <Comment
-                    key={comment.id}
-                    comment={comment}
-                    enableResponseTree={commentsState.displayComments === 'tree'}
-                    maxDeepLevel={commentsState.maxDeepLevel}
-                    onAddCommentClick={props.onAddCommentClick}
-                />    
-            )}
-        </div>
+        <section className={`comments-container ${className}`}>
+            <AddComment
+                isOpen={false}
+                onAddCommentClick={props.onAddCommentClick}
+            />
+            <section className="comments">
+                {props.comments.map(comment =>
+                    <FlatComment
+                        comment={comment}
+                        key={comment.id}
+                    />
+                )}
+            </section>
+        </section>
     );
+
+    // return (
+    //     <section className={`comments-container ${className}`}>
+    //         <AddComment
+    //             isOpen={false}
+    //             onAddCommentClick={(comment: string) => props.onAddCommentClick(comment)}
+    //         />
+    //         <section className="comments">
+    //             {generateCommentsMarkup(props)}
+    //         </section>
+    //     </section>
+    // );
 };
+
+// const generateCommentsMarkup = (props: CommentsProps): JSX.Element => {
+//     if (props.displayCommentsMode === 'flat') {
+//         return (<>
+//             {props.comments.map(comment =>
+//                 <FlatComment
+//                     comment={comment}
+//                     // onAddCommentClick={props.onAddCommentClick}
+//                     key={comment.id}
+//                 />
+//             )}
+//         </>);
+//     } else {
+//         const mappedComments: Array<ExtendedCommentItem> =
+//             mapCommentsToExtendedModel(props.comments);
+
+//         return (<>
+//             {
+//                 mappedComments.map(comment =>
+//                     <Comment
+//                         key={comment.id}
+//                         comment={comment}
+//                         maxDeepLevel={props.maxDeepLevel}
+//                         onAddCommentClick={(comment, responseTo) => props.onAddCommentClick(comment, responseTo)}
+//                     />
+//                 )
+//             }
+//         </>);
+//     }
+// };

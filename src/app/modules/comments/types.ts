@@ -1,12 +1,14 @@
 export default interface CommentItem {
     id: string,
     author: {
-        name: string;
+        displayName: string;
+        initials: string;
         avatar?: string;
     };
     text: string;
     date: Date;
     responseTo?: string;
+    responseToAuthor?: string;
 };
 
 export interface ExtendedCommentItem extends CommentItem {

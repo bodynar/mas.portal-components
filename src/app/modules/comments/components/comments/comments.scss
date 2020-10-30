@@ -1,0 +1,9 @@
+.comments-container {
+    padding: 1em;
+    margin: auto;
+
+    &--default {
+        width: 65vw;
+        border: 2px solid rgba(3, 121, 156, 0.25);
+    }
+}
