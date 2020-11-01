@@ -84,7 +84,7 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                     <div className="comment__postedTime">
                         <TimeAgo
                             datetime={props.comment.date}
-                            locale={'test'}
+                            locale={'en-US--modified'}
                         // title={props.comment.date.toDateString()}
                         />
                     </div>

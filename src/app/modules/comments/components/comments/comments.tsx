@@ -30,7 +30,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
 
-    timeago.register('test', timeAgoCustomDictionary);
+    timeago.register('en-US--modified', timeAgoCustomDictionary);
 
     return (
         <section className={`comments-container ${className}`}>
@@ -68,7 +68,6 @@ export default function Comments(props: CommentsProps): JSX.Element {
 //             {props.comments.map(comment =>
 //                 <FlatComment
 //                     comment={comment}
-//                     // onAddCommentClick={props.onAddCommentClick}
 //                     key={comment.id}
 //                 />
 //             )}
