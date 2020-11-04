@@ -22,11 +22,11 @@ export default function App(): JSX.Element {
                 <div className={`app__loading-cover app__loading-cover--center${isLoading ? " app__loading-cover--visible" : ""}`}>
                     <img src="loading-02.svg" alt="Loading" />
                 </div>
-                <div className={`app__contnet${isLoading ? " app__content--loading" : ""}`}>
-                    <header className="app-header">
+                <div className={`app__container${isLoading ? " app__content--loading" : ""}`}>
+                    <header className="app__header">
                         <Menu items={menuItems} />
                     </header>
-                    <main className="container-fluid" style={{ paddingLeft: 0 }}>
+                    <main className="container-fluid app__content" style={{ paddingLeft: 0 }}>
                         <Switch>
                             <Route exact path="/">
                                 <Home />
