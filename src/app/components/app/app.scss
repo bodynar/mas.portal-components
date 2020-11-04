@@ -1,10 +1,10 @@
 .app {
     position: relative;
 
-    .app-header {
-        margin-bottom: 3.5em;
-        position: relative;
-        z-index: 1;
+    &__header {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
     }
 
     &__loading-cover {
@@ -29,7 +29,7 @@
         }
     }
 
-    &__content {
+    &__container {
         &--loading {
             opacity: 0.25;
             pointer-events: none;
@@ -37,5 +37,9 @@
             width: 100%;
             height: auto;
         }
+    }
+
+    * {
+        scroll-margin-top: 3.5em;
     }
 }

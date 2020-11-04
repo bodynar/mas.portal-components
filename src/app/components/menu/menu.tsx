@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 
-import "./menu.scss";
-
 import { Link, useLocation } from "react-router-dom";
 
 import generateUid from "../../common/uid";
@@ -32,7 +30,7 @@ export default function Menu(props: MenuProps = defaultMenuProps): JSX.Element {
     const { pathname } = useLocation();
 
     return (
-        <nav className="app-navbar navbar navbar-light navbar-expand-lg" style={{ backgroundColor: "#e3f2fd" }}>
+        <nav className="navbar navbar-light navbar-expand-lg" style={{ backgroundColor: "#e3f2fd" }}>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
