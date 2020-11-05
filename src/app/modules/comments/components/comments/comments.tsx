@@ -6,7 +6,7 @@ import './comments.scss';
 
 import { isNullOrUndefined } from '../../../../common/utils';
 
-import Comment from '../comment/comment';
+// import Comment from '../comment/comment';
 import AddComment from '../addComment/addComment';
 import FlatComment from '../flatComment/flatComment';
 
@@ -22,11 +22,58 @@ export type CommentsProps = {
     // displayCommentsMode: 'flat' | 'tree';
     // maxDeepLevel: number;
     // onAddCommentClick: (comment: string, responseTo?: string) => void;
-    onAddCommentClick: (comment: string) => void;
+    onAddCommentClick: (comment: string) => Promise<CommentItem>;
     className?: string;
 };
 
+type CommentsState = {
+    orderDirection: 'asc' | 'desc';
+    comments: Array<CommentItem>;
+};
+
 export default function Comments(props: CommentsProps): JSX.Element {
+    const [state, setState] = React.useState<CommentsState>({
+        comments: props.comments
+            .map(x => x)
+            .sort((left, right) => left.date.getTime() - right.date.getTime()),
+        orderDirection: 'desc'
+    });
+
+    const addComment = (comment: CommentItem): void =>
+        setState({
+            ...state,
+            comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
+        });
+
+    const onAddComment = (comment: string): void => {
+        props.onAddCommentClick(comment)
+            .then(addComment);
+    };
+
+    // const onOrderDirectionToggle = (): void => {
+    //     const newDirection: 'asc' | 'desc' =
+    //         state.orderDirection === 'asc' ? 'desc' : 'asc'; // TODO: redo
+
+    //     setState({
+    //         orderDirection: newDirection,
+    //         comments: newDirection === 'asc'
+    //             ? state.comments.map(x => x).sort((left, right) => right.date.getTime() - left.date.getTime())
+    //             : state.comments.map(x => x).sort((left, right) => left.date.getTime() - right.date.getTime())
+    //     });
+    // };
+
+    const onOrderDirectionToggle = React.useCallback((): void => {
+        const newDirection: 'asc' | 'desc' =
+            state.orderDirection === 'asc' ? 'desc' : 'asc'; // TODO: redo
+
+        setState({
+            orderDirection: newDirection,
+            comments: newDirection === 'asc'
+                ? state.comments.map(x => x).sort((left, right) => right.date.getTime() - left.date.getTime())
+                : state.comments.map(x => x).sort((left, right) => left.date.getTime() - right.date.getTime())
+        });
+    }, [state.comments, state.orderDirection]);
+
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
 
@@ -36,10 +83,16 @@ export default function Comments(props: CommentsProps): JSX.Element {
         <section className={`comments-container ${className}`}>
             <AddComment
                 isOpen={false}
-                onAddCommentClick={props.onAddCommentClick}
+                onAddCommentClick={onAddComment}
             />
-            <section className="comments">
-                {props.comments.map(comment =>
+            <section className="comments-container__comments">
+                <span className="comments-container__order-direction-switch">
+                    <OrderDirectionSwitch
+                        orderDirection={state.orderDirection}
+                        onIconClick={onOrderDirectionToggle}
+                    />
+                </span>
+                {state.comments.map(comment =>
                     <FlatComment
                         comment={comment}
                         key={comment.id}
@@ -90,3 +143,21 @@ export default function Comments(props: CommentsProps): JSX.Element {
 //         </>);
 //     }
 // };
+
+const OrderDirectionSwitch = (props: { orderDirection: 'asc' | 'desc', onIconClick: () => void }): JSX.Element => {
+    const tittleCaptionTypeWord: string =
+        props.orderDirection === 'desc'
+            ? 'Newest'
+            : 'Oldest';
+
+    const iconClassName: string =
+        props.orderDirection === 'desc'
+            ? 'up'
+            : 'down';
+
+    return (<i
+        className={`fas fa-arrow-${iconClassName}`}
+        title={`${tittleCaptionTypeWord} first`}
+        onClick={() => props.onIconClick()}
+    ></i>);
+};

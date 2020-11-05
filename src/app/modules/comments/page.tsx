@@ -257,14 +257,9 @@ export default function CommentsPage(): JSX.Element {
     ].map((comment, _, comments) => ({
         ...comment,
         responseToAuthor: comments.find(x => x.id === comment.responseTo)?.author.displayName
-    }))
-    .sort((left, right) => right.date.getTime() - left.date.getTime());
+    }));
 
-    const [state, setState] = React.useState({
-        comments: comments
-    });
-
-    const onAddCommentClick: (comment: string) => void = (comment: string): void => {
+    const onAddCommentClick = (comment: string): Promise<CommentItem> => {
         const newComment: CommentItem = {
             id: generateUid(),
             author: {
@@ -274,17 +269,15 @@ export default function CommentsPage(): JSX.Element {
             date: new Date(),
             text: comment
         };
-        
-        setState({
-            comments: [newComment, ...state.comments, ]
-        });
+
+        return Promise.resolve(newComment);
     };
 
 
     return (
         <div style={{ width: '70vw', margin: '5em auto' }}>
             <Comments
-                comments={state.comments}
+                comments={comments}
                 // displayCommentsMode={'flat'}
                 // maxDeepLevel={3}
                 onAddCommentClick={onAddCommentClick}

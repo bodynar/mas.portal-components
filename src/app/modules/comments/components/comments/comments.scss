@@ -6,4 +6,21 @@
         width: 65vw;
         border: 2px solid rgba(3, 121, 156, 0.25);
     }
+
+    &__order-direction-switch {
+        display: flex;
+        justify-content: flex-end;
+
+        i.fas {
+            font-size: 1.15em;
+            color: rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+
+            &:hover {
+                color: rgba(0, 0, 0, 0.75);
+            }
+        }
+    }
 }
