@@ -39,32 +39,21 @@ export default function Comments(props: CommentsProps): JSX.Element {
         orderDirection: 'desc'
     });
 
-    const addComment = (comment: CommentItem): void =>
+    const onAddComment = React.useCallback((comment: CommentItem): void => {
         setState({
             ...state,
             comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
         });
+    }, [state]);
 
-    const onAddComment = (comment: string): void => {
+    const onAddCommentClick = React.useCallback((comment: string): void => {
         props.onAddCommentClick(comment)
-            .then(addComment);
-    };
-
-    // const onOrderDirectionToggle = (): void => {
-    //     const newDirection: 'asc' | 'desc' =
-    //         state.orderDirection === 'asc' ? 'desc' : 'asc'; // TODO: redo
-
-    //     setState({
-    //         orderDirection: newDirection,
-    //         comments: newDirection === 'asc'
-    //             ? state.comments.map(x => x).sort((left, right) => right.date.getTime() - left.date.getTime())
-    //             : state.comments.map(x => x).sort((left, right) => left.date.getTime() - right.date.getTime())
-    //     });
-    // };
+            .then(onAddComment);
+    }, [props, onAddComment]);
 
     const onOrderDirectionToggle = React.useCallback((): void => {
         const newDirection: 'asc' | 'desc' =
-            state.orderDirection === 'asc' ? 'desc' : 'asc'; // TODO: redo
+            state.orderDirection === 'asc' ? 'desc' : 'asc';
 
         setState({
             orderDirection: newDirection,
@@ -83,7 +72,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
         <section className={`comments-container ${className}`}>
             <AddComment
                 isOpen={false}
-                onAddCommentClick={onAddComment}
+                onAddCommentClick={onAddCommentClick}
             />
             <section className="comments-container__comments">
                 <span className="comments-container__order-direction-switch">
