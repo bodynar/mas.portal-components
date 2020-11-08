@@ -23,9 +23,6 @@
         @media (max-width: 1024px) {
             width: 4em;
         }
-
-        span[data-avatar-initials] {
-        }
     }
 
     &__avatar-img {
@@ -84,17 +81,19 @@
         }
     }
 
-    // &__response {
-    //     a {
-    //         &:hover {
-    //             text-decoration: none;
-    //             color: rgb(68, 66, 81);
-    //         }
-    //         .fas {
-    //             margin-right: 5px;
-    //         }
-    //     }
-    // }
+    &__response {
+        span {
+            cursor: pointer;
+            
+            &:hover {
+                text-decoration: none;
+                color: rgb(0, 140, 133);
+            }
+            .fas {
+                margin-right: 5px;
+            }
+        }
+    }
 
     &__content {
         grid-area: Content;

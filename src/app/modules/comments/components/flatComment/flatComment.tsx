@@ -9,6 +9,8 @@ import { isNullOrUndefined } from '../../../../common/utils';
 
 export type FlatCommentProps = {
     comment: CommentItem;
+    commentContainerRef?: React.MutableRefObject<HTMLDivElement | null>;
+    onResponseToClick?: (commentId: string) => void;
     // onAddCommentClick: (comment: string, responseTo: string) => void;
 };
 
@@ -53,20 +55,17 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
     //             alt={`${props.comment.author.displayName}'s avatar`}
     //         />;
 
-    // const responseBlock: JSX.Element =
-    //     isNullOrUndefined(commentState.comment.responseTo)
-    //         ? <></>
-    //         : <div className="comment__response">
-    //             <a className="gray-color" href={`#${commentState.comment.responseTo}`}>
-    //                 <i className="fas fa-reply"></i> {commentState.comment.responseToAuthor}
-    //             </a>
-    //         </div>;
+    const onResponseToClick = React.useCallback((commentId: string): void => {
+        if (!isNullOrUndefined(props.onResponseToClick)) {
+            props.onResponseToClick(commentId);
+        }
+    }, [props]);
 
     return (
         <div
             className="comment"
             key={props.comment.id}
-            id={props.comment.id}
+            ref={props.commentContainerRef}
         >
             <div className="comment__heading">
                 <div className="comment__avatar">
@@ -96,7 +95,12 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                             }}
                         />
                     </div>
-                    {/* {responseBlock} */}
+                    <ResponseTo
+                        key={props.comment.id + props.comment.responseTo}
+                        responseTo={props.comment.responseTo}
+                        responseToAuthor={props.comment.responseToAuthor}
+                        onClick={onResponseToClick}
+                    />
                     {/* <div className="comment__actions">
                         {generateCommentActionsDropdownMenu(commentState.isActionsToggled, onActionsToggleClick)}
                     </div> */}
@@ -138,6 +142,23 @@ const CommentAvaratar = (props: { initials: string, displayName: string, avatar?
         >
             {props.initials}
         </span>);
+    }
+};
+
+const ResponseTo = (props: { onClick?: (commentId: string) => void, responseTo?: string, responseToAuthor?: string }): JSX.Element => {
+    if (isNullOrUndefined(props.responseTo)) {
+        return (<></>);
+    } else {
+        return (
+            <div className="comment__response">
+                <span
+                    className="gray-color"
+                    onClick={_ => props.onClick?.(props.responseTo!)}
+                >
+                    <i className="fas fa-reply"></i> {props.responseToAuthor}
+                </span>
+            </div>
+        );
     }
 };
 

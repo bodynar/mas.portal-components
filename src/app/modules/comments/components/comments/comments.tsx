@@ -30,6 +30,7 @@ export type CommentsProps = {
 type CommentsState = {
     orderDirection: 'asc' | 'desc';
     comments: Array<CommentItem>;
+    commentComponentRefs: Array<React.MutableRefObject<HTMLDivElement | null>>;
 };
 
 export default function Comments(props: CommentsProps): JSX.Element {
@@ -43,7 +44,8 @@ export default function Comments(props: CommentsProps): JSX.Element {
                 }
             }) as CommentItem)
             .sort((left, right) => left.date.getTime() - right.date.getTime()),
-        orderDirection: 'desc'
+        orderDirection: 'desc',
+        commentComponentRefs: props.comments.map(_ => React.createRef()),
     });
 
     const onAddComment = React.useCallback((comment: CommentItem): void => {
@@ -63,12 +65,31 @@ export default function Comments(props: CommentsProps): JSX.Element {
             state.orderDirection === 'asc' ? 'desc' : 'asc';
 
         setState({
+            ...state,
             orderDirection: newDirection,
             comments: newDirection === 'asc'
                 ? state.comments.map(x => x).sort((left, right) => right.date.getTime() - left.date.getTime())
                 : state.comments.map(x => x).sort((left, right) => left.date.getTime() - right.date.getTime())
         });
-    }, [state.comments, state.orderDirection]);
+    }, [state]);
+
+    const onResponseToClick = React.useCallback((commentId: string): void => {
+        const specifiedComment: CommentItem | undefined =
+            state.comments.find(x => x.id === commentId);
+
+        if (!isNullOrUndefined(specifiedComment)) {
+            const index: number = state.comments.indexOf(specifiedComment);
+
+            if (index >= 0) {
+                const commentRef: React.MutableRefObject<HTMLDivElement | null> =
+                    state.commentComponentRefs[index];
+
+                if (!isNullOrUndefined(commentRef) && !isNullOrUndefined(commentRef.current)) {
+                    commentRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    }, [state]);
 
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
@@ -88,10 +109,12 @@ export default function Comments(props: CommentsProps): JSX.Element {
                         onIconClick={onOrderDirectionToggle}
                     />
                 </span>
-                {state.comments.map(comment =>
+                {state.comments.map((comment, i) =>
                     <FlatComment
                         comment={comment}
                         key={comment.id}
+                        commentContainerRef={state.commentComponentRefs[i]}
+                        onResponseToClick={onResponseToClick}
                     />
                 )}
             </section>
