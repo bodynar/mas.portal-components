@@ -15,6 +15,7 @@
 
         &:not(.add-comment__container--not-empty) .add-comment__pseudo-input-mask span {
             display: block;
+            user-select: none;
         }
     }
 
