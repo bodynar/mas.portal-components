@@ -16,6 +16,7 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // TODO:
 // 1. Options: flat \ tree, when flat - display responseTo with ling to #
 // 2. Figure out about response tree level (max deep 5 => then flat)
+// 3. After add - scroll to comment or to addComment
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
@@ -34,7 +35,13 @@ type CommentsState = {
 export default function Comments(props: CommentsProps): JSX.Element {
     const [state, setState] = React.useState<CommentsState>({
         comments: props.comments
-            .map(x => x)
+            .map(x => ({
+                ...x,
+                author: {
+                    ...x.author,
+                    initials: x.author.initials.substring(0, 2)
+                }
+            }) as CommentItem)
             .sort((left, right) => left.date.getTime() - right.date.getTime()),
         orderDirection: 'desc'
     });

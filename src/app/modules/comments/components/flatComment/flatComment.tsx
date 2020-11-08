@@ -24,7 +24,6 @@ export type FlatCommentProps = {
 // - Figure out about AddComment position, display and events handlex
 // - Add icon response and href
 // - Rename commentState isResponseBlockVisible
-// - Add avatar or placeholder
 
 export default function FlatComment(props: FlatCommentProps): JSX.Element {
     // const [commentState, setState] = React.useState<FlatCommentState>({
@@ -71,21 +70,30 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
         >
             <div className="comment__heading">
                 <div className="comment__avatar">
-                    <span
-                        className="comment__avatar-img comment__avatar-img--only-initials"
-                    >
-                        {props.comment.author.initials}
-                    </span>
+                    <CommentAvaratar
+                        key={props.comment.author.avatar || props.comment.author.initials}
+                        displayName={props.comment.author.displayName}
+                        initials={props.comment.author.initials}
+                        avatar={props.comment.author.avatar}
+                    />
                 </div>
                 <div className="comment__info">
                     <div className="comment__author">
                         <span>{props.comment.author.displayName}</span>
                     </div>
-                    <div className="comment__postedTime">
+                    <div className="comment__postedTime-container">
                         <TimeAgo
+                            className="comment__postedTime gray-color"
                             datetime={props.comment.date}
-                            locale={'en-US--modified'}
-                        // title={props.comment.date.toDateString()}
+                            locale="en-US--modified"
+                            live={false}
+                            ref={x => {
+                                if (x && x.dom) {
+                                    x.dom.title = props.comment.date.toLocaleString();
+                                }
+
+                                return x;
+                            }}
                         />
                     </div>
                     {/* {responseBlock} */}
@@ -111,6 +119,26 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
             </div> */}
         </div>
     );
+};
+
+const CommentAvaratar = (props: { initials: string, displayName: string, avatar?: string }): JSX.Element => {
+    if (!isNullOrUndefined(props.avatar)) {
+        return (
+            <>
+                <img
+                    className="comment__avatar-img"
+                    src={props.avatar}
+                    alt={`${props.displayName}'s avatar`}
+                />
+            </>
+        );
+    } else {
+        return (<span
+            className="comment__avatar-img comment__avatar-img--only-initials"
+        >
+            {props.initials}
+        </span>);
+    }
 };
 
 // const generateCommentActionsDropdownMenu = (isToggled: boolean, onActionsClick: () => void): JSX.Element => {

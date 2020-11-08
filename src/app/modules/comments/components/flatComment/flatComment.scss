@@ -3,11 +3,14 @@
 
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 0.25fr 1fr 0.25fr;
+    grid-template-rows: 0.25fr min-content
+    // 0.25fr
+    ;
     grid-template-areas:
         "Heading"
         "Content"
-        "Footer";
+        // "Footer"
+        ;
 
     &__heading {
         display: flex;
@@ -31,6 +34,7 @@
             justify-content: center;
             align-items: center;
             background: rgba(0, 0, 0, 0.05);
+            user-select: none;
         }
     }
 
@@ -42,6 +46,15 @@
         * {
             width: 10%;
         }
+    }
+
+    &__postedTime-container {
+        width: 15%;
+    }
+
+    &__postedTime {
+        cursor: help;
+        user-select: none;
     }
 
     // &__actions {
@@ -79,6 +92,7 @@
         p {
             margin: 0;
             padding: 0.8em 0;
+            white-space: pre-line;
         }
     }
 
@@ -102,6 +116,6 @@
     // }
 
     .gray-color {
-        color: rgba(0, 0, 0, 0.75);
+        color: rgba(0, 0, 0, 0.5);
     }
 }

@@ -254,8 +254,16 @@ export default function CommentsPage(): JSX.Element {
             "text": "Et sunt ex exercitation aliquip nisi ut duis eu nulla. Nisi duis eu enim aliquip velit culpa et laboris aliquip. Eiusmod dolor occaecat aliquip ullamco nostrud. Ut non sunt sint amet occaecat aliqua in mollit culpa ut. Enim incididunt id deserunt ad enim anim dolor. Ad labore consequat fugiat ad exercitation ut ipsum amet amet in deserunt fugiat magna irure. Voluptate aliqua do adipisicing non.",
             "date": new Date("Tue Aug 02 2016 15:26:57 GMT+0000")
         }
-    ].map((comment, _, comments) => ({
+    ].map((comment, index, comments) => ({
         ...comment,
+        author: {
+            ...comment.author,
+            avatar: (index % 3 === 0)
+                ? (index % 5 === 0)
+                    ? "https://picsum.photos/100/350?blur"
+                    : "https://picsum.photos/60/60"
+                : undefined
+        },
         responseToAuthor: comments.find(x => x.id === comment.responseTo)?.author.displayName
     }));
 
@@ -265,6 +273,7 @@ export default function CommentsPage(): JSX.Element {
             author: {
                 displayName: "Test admin",
                 initials: "TA",
+                avatar: "https://picsum.photos/60/60"
             },
             date: new Date(),
             text: comment
