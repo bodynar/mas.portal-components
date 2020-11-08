@@ -39,7 +39,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
                 ...x,
                 author: {
                     ...x.author,
-                    initials: x.author.initials.substring(0, 2)
+                    initials: x.author.initials.substring(0, 2).toUpperCase()
                 }
             }) as CommentItem)
             .sort((left, right) => left.date.getTime() - right.date.getTime()),
