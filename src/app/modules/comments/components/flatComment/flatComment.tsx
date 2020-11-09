@@ -9,8 +9,6 @@ import { isNullOrUndefined } from '../../../../common/utils';
 
 export type FlatCommentProps = {
     comment: CommentItem;
-    commentContainerRef?: React.MutableRefObject<HTMLDivElement | null>;
-    onResponseToClick?: (commentId: string) => void;
     // onAddCommentClick: (comment: string, responseTo: string) => void;
 };
 
@@ -55,17 +53,17 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
     //             alt={`${props.comment.author.displayName}'s avatar`}
     //         />;
 
-    const onResponseToClick = React.useCallback((commentId: string): void => {
-        if (!isNullOrUndefined(props.onResponseToClick)) {
-            props.onResponseToClick(commentId);
-        }
-    }, [props]);
+    // const onResponseToClick = React.useCallback((commentId: string): void => {
+    //     // if (!isNullOrUndefined(props.onResponseToClick)) {
+    //     //     props.onResponseToClick(commentId);
+    //     // }
+    // }, [props]);
 
     return (
         <div
             className="comment"
             key={props.comment.id}
-            ref={props.commentContainerRef}
+            data-comment-id={props.comment.id}
         >
             <div className="comment__heading">
                 <div className="comment__avatar">
@@ -99,7 +97,6 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                         key={props.comment.id + props.comment.responseTo}
                         responseTo={props.comment.responseTo}
                         responseToAuthor={props.comment.responseToAuthor}
-                        onClick={onResponseToClick}
                     />
                     {/* <div className="comment__actions">
                         {generateCommentActionsDropdownMenu(commentState.isActionsToggled, onActionsToggleClick)}
@@ -145,7 +142,7 @@ const CommentAvaratar = (props: { initials: string, displayName: string, avatar?
     }
 };
 
-const ResponseTo = (props: { onClick?: (commentId: string) => void, responseTo?: string, responseToAuthor?: string }): JSX.Element => {
+const ResponseTo = (props: { responseTo?: string, responseToAuthor?: string }): JSX.Element => {
     if (isNullOrUndefined(props.responseTo)) {
         return (<></>);
     } else {
@@ -153,7 +150,7 @@ const ResponseTo = (props: { onClick?: (commentId: string) => void, responseTo?:
             <div className="comment__response">
                 <span
                     className="gray-color"
-                    onClick={_ => props.onClick?.(props.responseTo!)}
+                    data-comment-target={props.responseTo}
                 >
                     <i className="fas fa-reply"></i> {props.responseToAuthor}
                 </span>

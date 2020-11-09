@@ -30,7 +30,6 @@ export type CommentsProps = {
 type CommentsState = {
     orderDirection: 'asc' | 'desc';
     comments: Array<CommentItem>;
-    commentComponentRefs: Array<React.MutableRefObject<HTMLDivElement | null>>;
 };
 
 export default function Comments(props: CommentsProps): JSX.Element {
@@ -45,7 +44,6 @@ export default function Comments(props: CommentsProps): JSX.Element {
             }) as CommentItem)
             .sort((left, right) => left.date.getTime() - right.date.getTime()),
         orderDirection: 'desc',
-        commentComponentRefs: props.comments.map(_ => React.createRef()),
     });
 
     const onAddComment = React.useCallback((comment: CommentItem): void => {
@@ -73,23 +71,21 @@ export default function Comments(props: CommentsProps): JSX.Element {
         });
     }, [state]);
 
-    const onResponseToClick = React.useCallback((commentId: string): void => {
-        const specifiedComment: CommentItem | undefined =
-            state.comments.find(x => x.id === commentId);
+    const onResponseToClick = React.useCallback((event: React.MouseEvent<HTMLElement>): void => {
+        const target = event.target as HTMLElement;
 
-        if (!isNullOrUndefined(specifiedComment)) {
-            const index: number = state.comments.indexOf(specifiedComment);
+        if (target.nodeName.toLocaleLowerCase() === "span"
+            && !isNullOrUndefined(target.dataset['commentTarget'])) {
+            const commentId: string = target.dataset['commentTarget'];
 
-            if (index >= 0) {
-                const commentRef: React.MutableRefObject<HTMLDivElement | null> =
-                    state.commentComponentRefs[index];
+            const targetComment: Element | null =
+                document.querySelector(`div[data-comment-id="${commentId}"]`);
 
-                if (!isNullOrUndefined(commentRef) && !isNullOrUndefined(commentRef.current)) {
-                    commentRef.current.scrollIntoView({ behavior: 'smooth' });
-                }
+            if (!isNullOrUndefined(targetComment)) {
+                targetComment.scrollIntoView({ behavior: 'smooth' });
             }
         }
-    }, [state]);
+    }, []);
 
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
@@ -102,19 +98,17 @@ export default function Comments(props: CommentsProps): JSX.Element {
                 isOpen={false}
                 onAddCommentClick={onAddCommentClick}
             />
-            <section className="comments-container__comments">
+            <section className="comments-container__comments" onClick={onResponseToClick}>
                 <span className="comments-container__order-direction-switch">
                     <OrderDirectionSwitch
                         orderDirection={state.orderDirection}
                         onIconClick={onOrderDirectionToggle}
                     />
                 </span>
-                {state.comments.map((comment, i) =>
+                {state.comments.map(comment =>
                     <FlatComment
                         comment={comment}
                         key={comment.id}
-                        commentContainerRef={state.commentComponentRefs[i]}
-                        onResponseToClick={onResponseToClick}
                     />
                 )}
             </section>
