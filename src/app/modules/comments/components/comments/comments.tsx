@@ -17,19 +17,22 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // 1. Options: flat \ tree, when flat - display responseTo with ling to #
 // 2. Figure out about response tree level (max deep 5 => then flat)
 // 3. After add - scroll to comment or to addComment
+// 4. How many times timeago got registerd and it causes some issues or it handles normaly inside?
+// 5. Fix AddComment button panel width - click for focus
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
     // displayCommentsMode: 'flat' | 'tree';
     // maxDeepLevel: number;
     // onAddCommentClick: (comment: string, responseTo?: string) => void;
-    onAddCommentClick: (comment: string) => Promise<CommentItem>;
+    onAddCommentClick: (comment: string, responseTo?: string) => Promise<CommentItem>;
     className?: string;
 };
 
 type CommentsState = {
     orderDirection: 'asc' | 'desc';
     comments: Array<CommentItem>;
+    responseToId?: string;
 };
 
 export default function Comments(props: CommentsProps): JSX.Element {
@@ -49,12 +52,13 @@ export default function Comments(props: CommentsProps): JSX.Element {
     const onAddComment = React.useCallback((comment: CommentItem): void => {
         setState({
             ...state,
+            responseToId: undefined,
             comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
         });
     }, [state]);
 
-    const onAddCommentClick = React.useCallback((comment: string): void => {
-        props.onAddCommentClick(comment)
+    const onAddCommentClick = React.useCallback((comment: string, responseTo?: string): void => {
+        props.onAddCommentClick(comment, responseTo)
             .then(onAddComment);
     }, [props, onAddComment]);
 
@@ -87,6 +91,14 @@ export default function Comments(props: CommentsProps): JSX.Element {
         }
     }, []);
 
+    const onResponseClick = React.useCallback(
+        (commentId: string | undefined) =>
+            setState({
+                ...state,
+                responseToId: commentId
+            }),
+        [state]);
+
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
 
@@ -96,9 +108,13 @@ export default function Comments(props: CommentsProps): JSX.Element {
         <section className={`comments-container ${className}`}>
             <AddComment
                 isOpen={false}
+                autofocus={true}
                 onAddCommentClick={onAddCommentClick}
             />
-            <section className="comments-container__comments" onClick={onResponseToClick}>
+            <section
+                className="comments-container__comments"
+                onClick={onResponseToClick}
+            >
                 <span className="comments-container__order-direction-switch">
                     <OrderDirectionSwitch
                         orderDirection={state.orderDirection}
@@ -109,6 +125,9 @@ export default function Comments(props: CommentsProps): JSX.Element {
                     <FlatComment
                         comment={comment}
                         key={comment.id}
+                        onAddCommentClick={onAddCommentClick}
+                        onResponseClick={onResponseClick}
+                        responseToId={state.responseToId}
                     />
                 )}
             </section>

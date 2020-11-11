@@ -267,7 +267,7 @@ export default function CommentsPage(): JSX.Element {
         responseToAuthor: comments.find(x => x.id === comment.responseTo)?.author.displayName
     }));
 
-    const onAddCommentClick = (comment: string): Promise<CommentItem> => {
+    const onAddCommentClick = (comment: string, responseTo?: string): Promise<CommentItem> => {
         const newComment: CommentItem = {
             id: generateUid(),
             author: {
@@ -276,7 +276,9 @@ export default function CommentsPage(): JSX.Element {
                 avatar: "https://picsum.photos/60/60"
             },
             date: new Date(),
-            text: comment
+            text: comment,
+            responseTo: responseTo,
+            responseToAuthor: comments.find(x => x.id === responseTo)?.author.displayName
         };
 
         return Promise.resolve(newComment);

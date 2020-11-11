@@ -1,142 +1,153 @@
 import React from 'react';
 
+import TimeAgo from 'timeago-react';
+
 import './comment.scss';
 
+import CommentItem from '../../types';
 import { isNullOrUndefined } from '../../../../common/utils';
 
-import { ExtendedCommentItem } from '../../types';
-import AddComment from '../addComment/addComment';
-
 export type CommentProps = {
-    comment: ExtendedCommentItem;
-    maxDeepLevel: number;
-    onAddCommentClick: (comment: string, responseTo: string) => void;
+    comment: CommentItem;
+    isResponseVisible: boolean;
+    onResponseClick: () => void;
 };
 
-type CommentState = {
-    comment: ExtendedCommentItem;
-    isCollapsed: boolean;
-    responseTo?: string;
-};
+// type FlatCommentState = {
+//     comment: CommentItem;
+//     // isResponseBlockVisible: boolean;
+//     // isActionsToggled: boolean;
+// };
 
-// TODO: 
-// 1. Posted time calc (5min ago, 5h ago, 1d ago, date)
-// 2. Flat type = responseTo with icon (restyle a little bit)
-// 3. Get max deep level, then flat
+
+// TODO (v1.2)
+// - Add comment actions dropwdown menu (with checkbox based)
+// - Figure out about AddComment position, display and events handlex
+// - Add icon response and href
+// - Rename commentState isResponseBlockVisible
 
 export default function Comment(props: CommentProps): JSX.Element {
-    const [commentState, setState] = React.useState<CommentState>({
-        comment: props.comment,
-        isCollapsed: props.comment.isRepsonsedCollapsed === true
-    });
+    // const [commentState, setState] = React.useState<FlatCommentState>({
+    //     comment: props.comment,
+    //     // isResponseBlockVisible: false,
+    //     // isActionsToggled: false
+    // });
 
-    const toggleResponses: () => void = (): void => {
-        props.comment.isRepsonsedCollapsed = !commentState.isCollapsed;
-
-        setState({
-            ...commentState,
-            isCollapsed: !commentState.isCollapsed
-        });
-    }
-
-    const onResponseClick: () => void = (): void => setState({ ...commentState, responseTo: commentState.comment.id });
-    const onCancelAddCommentClick: () => void = (): void => setState({ ...commentState, responseTo: undefined });
-    const onAddCommentClick: (comment: string, responseTo: string) => void = (comment: string, responseTo: string): void => {
-        onCancelAddCommentClick();
-        props.onAddCommentClick(comment, responseTo);
-    };
-
-    const deepLevelClassName: string = props.comment.commentLevel > 0 ? ' comment-container--deep' : '';
-    const postedTime = '3 h.';
+    // const onActionsToggleClick: () => void = (): void => setState({ ...commentState, isActionsToggled: !commentState.isActionsToggled });
 
     return (
-        <div className={`comment-container${deepLevelClassName}`} key={commentState.comment.id}>
-            <div className="comment-container__info">
-                <span>{commentState.comment.author.displayName}</span>
-                <span title={commentState.comment.date.toString()}>{postedTime}</span>
-            </div>
-            <div className="comment-container__content">
-                <p>{commentState.comment.text}</p>
-            </div>
-            <div className="comment-container__actions">
-                {
-                    isNullOrUndefined(commentState.responseTo)
-                        ? <span
-                            className="comment-container__action"
-                            onClick={onResponseClick}
-                        >
-                            Response
-                            </span>
-                        : <AddComment
-                            isOpen={true}
-                            isResponse={true}
-                            onAddCommentClick={(comment: string) => onAddCommentClick(comment, commentState.responseTo!)}
-                            onCancelClick={onCancelAddCommentClick}
+        <div
+            className="comment"
+            key={props.comment.id}
+            data-comment-id={props.comment.id}
+        >
+            <div className="comment__heading">
+                <div className="comment__avatar">
+                    <CommentAvaratar
+                        key={props.comment.author.avatar || props.comment.author.initials}
+                        displayName={props.comment.author.displayName}
+                        initials={props.comment.author.initials}
+                        avatar={props.comment.author.avatar}
+                    />
+                </div>
+                <div className="comment__info">
+                    <div className="comment__author">
+                        <span>{props.comment.author.displayName}</span>
+                    </div>
+                    <div className="comment__postedTime-container">
+                        <TimeAgo
+                            className="comment__postedTime gray-color"
+                            datetime={props.comment.date}
+                            locale="en-US--modified"
+                            live={false}
+                            ref={x => {
+                                if (x && x.dom) {
+                                    x.dom.title = props.comment.date.toLocaleString();
+                                }
+
+                                return x;
+                            }}
                         />
+                    </div>
+                    <ResponseTo
+                        key={props.comment.id + props.comment.responseTo}
+                        responseTo={props.comment.responseTo}
+                        responseToAuthor={props.comment.responseToAuthor}
+                    />
+                    {/* <div className="comment__actions">
+                        {generateCommentActionsDropdownMenu(commentState.isActionsToggled, onActionsToggleClick)}
+                    </div> */}
+                </div>
+            </div>
+            <div className="comment__content">
+                <p>{props.comment.text}</p>
+            </div>
+            <div className="comment__footer">
+                {props.isResponseVisible
+                    ? <></>
+                    : <span
+                        className="comment__action"
+                        onClick={props.onResponseClick}
+                    >
+                        Response
+                    </span>
                 }
             </div>
-            {displayResponsesIfExists(props.maxDeepLevel, commentState.comment, toggleResponses, props.onAddCommentClick)}
         </div>
     );
 };
 
-const displayResponsesIfExists = (
-    maxDeepLevel: number,
-    comment: ExtendedCommentItem,
-    onTrunkClick: () => void,
-    onAddCommentClick: (comment: string, responseTo: string) => void): JSX.Element => {
-    if (comment.responses.length === 0) {
-        return (<></>);
-    }
-
-    if (comment.commentLevel >= maxDeepLevel) {
-        // todo: comment inline
+const CommentAvaratar = (props: { initials: string, displayName: string, avatar?: string }): JSX.Element => {
+    if (!isNullOrUndefined(props.avatar)) {
         return (
             <>
-                {comment.responses.map(response =>
-                    <Comment
-                        key={response.id}
-                        comment={response}
-                        maxDeepLevel={maxDeepLevel}
-                        onAddCommentClick={onAddCommentClick}
-                    />
-                )}
+                <img
+                    className="comment__avatar-img"
+                    src={props.avatar}
+                    alt={`${props.displayName}'s avatar`}
+                />
             </>
         );
     } else {
-        let repliesContent: JSX.Element = (<></>);
+        return (<span
+            className="comment__avatar-img comment__avatar-img--only-initials"
+        >
+            {props.initials}
+        </span>);
+    }
+};
 
-        if (comment.isRepsonsedCollapsed) {
-            repliesContent = (
-                <span
-                    className="comment-container__action comment-container__action--color--blue"
-                    onClick={onTrunkClick}
-                >
-                    Show comments
-                </span>
-            );
-        } else {
-            repliesContent = (
-                <>
-                    <div className="comment-container__replies">
-                        {comment.responses.map(response =>
-                            <Comment
-                                key={response.id}
-                                maxDeepLevel={maxDeepLevel}
-                                comment={response}
-                                onAddCommentClick={onAddCommentClick}
-                            />
-                        )}
-                    </div>
-                    <div className="comment-container__replies-tree-trunk" onClick={onTrunkClick}></div>
-                </>
-            );
-        }
-
+const ResponseTo = (props: { responseTo?: string, responseToAuthor?: string }): JSX.Element => {
+    if (isNullOrUndefined(props.responseTo)) {
+        return (<></>);
+    } else {
         return (
-            <div className="comment-container__replies-container">
-                {repliesContent}
+            <div className="comment__response">
+                <span
+                    className="gray-color"
+                    data-comment-target={props.responseTo}
+                >
+                    <i className="fas fa-reply"></i> {props.responseToAuthor}
+                </span>
             </div>
         );
     }
 };
+
+// const generateCommentActionsDropdownMenu = (isToggled: boolean, onActionsClick: () => void): JSX.Element => {
+//     return (
+//         <div className="comment__action-dropdown">
+//             <button
+//                 className="comment__action-dropdown-toggler"
+//                 onClick={() => onActionsClick()}
+//             >
+//                 <i className="fas fa-ellipsis-v"></i>
+//             </button>
+//             <ul>
+//                 <li>Action 1</li>
+//                 <li>Action 2</li>
+//                 <li>Action 3</li>
+//             </ul>
+//         </div>
+//     );
+// };

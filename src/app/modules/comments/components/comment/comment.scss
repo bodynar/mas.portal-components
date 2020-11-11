@@ -1,75 +1,125 @@
-.comment-container {
+.comment {
     padding: 0.8em;
 
-    &--deep {
-        padding: 0.3em 0.8em;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.25fr min-content 0.25fr;
+    grid-template-areas:
+        "Heading"
+        "Content"
+        "Footer";
+
+    &__heading {
+        display: flex;
+    }
+
+    &__avatar {
+        width: 5em;
+
+        @media (max-width: 1024px) {
+            width: 4em;
+        }
+    }
+
+    &__avatar-img {
+        width: 3em;
+        height: 3em;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+
+        &--only-initials {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.05);
+            user-select: none;
+        }
     }
 
     &__info {
-        display: inline;
+        display: flex;
+        width: 95%;
+        align-items: center;
+    }
 
-        span {
-            font-weight: bold;
-        }
+    &__postedTime-container {
+        width: 15%;
 
-        & > * {
-            padding-right: 8px;
+        @media (max-width: 1440px) {
+            width: 30%;
         }
     }
 
-    &__action {
-        font-size: 0.9em;
-        color: gray;
-        cursor: pointer;
+    &__postedTime {
+        cursor: help;
         user-select: none;
+    }
 
-        &--color--blue {
-            color: #4086e0;
-        }
+    // &__actions {
+    //     margin-left: auto;
+    //     width: auto;
+    //     align-self: flex-start;
 
-        &:hover {
-            color: red !important;
+    //     .fas {
+    //         cursor: pointer;
+
+    //         &:hover {
+    //             color: orchid;
+    //         }
+    //     }
+    // }
+
+    &__author {
+        width: 10%;
+
+        @media (max-width: 1440px) {
+            width: 20%;
         }
-        &:active {
-            color: #a50000 !important;
+    }
+
+    &__response {
+        span {
+            cursor: pointer;
+            
+            &:hover {
+                text-decoration: none;
+                color: rgb(0, 140, 133);
+            }
+            .fas {
+                margin-right: 5px;
+            }
         }
     }
 
     &__content {
+        grid-area: Content;
+
         p {
             margin: 0;
             padding: 0.8em 0;
+            white-space: pre-line;
         }
     }
 
-    &__actions {
+    &__footer {
+        grid-area: Footer;
         padding-bottom: 0.5em;
     }
 
-    &__replies-container {
-        position: relative;
-
-        &:hover .comment-container__replies-tree-trunk {
-            display: block;
-        }
-    }
-
-    &__replies {
-        padding-left: 1.5em;
-        border-left: 1px dashed #ccc;
-    }
-
-    &__replies-tree-trunk {
-        display: none;
-        position: absolute;
-        width: 32px;
-        height: 100%;
-        left: 0;
-        top: 0;
+    &__action {
+        font-size: 0.9em;
         cursor: pointer;
+        user-select: none;
 
         &:hover {
-            border-left: 2px solid #4086e0;
+            color: red;
         }
+        &:active {
+            color: #a50000;
+        }
+    }
+
+    .gray-color {
+        color: rgba(0, 0, 0, 0.5);
     }
 }

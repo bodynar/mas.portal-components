@@ -17,6 +17,10 @@
             display: block;
             user-select: none;
         }
+
+        &--focused {
+            border-color: var(--blue);
+        }
     }
 
     &__pseudo-input {
