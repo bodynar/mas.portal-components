@@ -142,13 +142,31 @@ type AddCommentPseudoInputProps = {
 const AddCommentPseudoInput = (props: AddCommentPseudoInputProps): JSX.Element => {
     const [isFocused, setIsFocused] = React.useState(props.autofocus);
 
+    const onActionsClick = React.useCallback(
+        (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+            const target = event.target as HTMLElement;
+
+            if (target.nodeName.toLocaleLowerCase() === "div"
+                && !isNullOrUndefined(target.dataset['isActionHolder'])) {
+                setIsFocused(true);
+
+                if (!isNullOrUndefined(props.pseudoInputRef.current)) {
+                    props.pseudoInputRef.current.focus();
+                }
+            }
+        }, [props.pseudoInputRef]);
+
     const className: string =
         "add-comment__container"
         + (props.hideMask ? " add-comment__container--not-empty" : "")
         + (isFocused ? " add-comment__container--focused" : "");
 
     return (
-        <div className={className}>
+        <div
+            className={className}
+            data-is-action-holder={true}
+            onClick={onActionsClick}
+        >
             <div className="add-comment__pseudo-input-mask">
                 <span>Add your comment..</span>
             </div>
@@ -170,7 +188,11 @@ const AddCommentPseudoInput = (props: AddCommentPseudoInputProps): JSX.Element =
                     }}
                 >
                 </div>
-                <div className="add-comment__pseudo-input-actions">
+                <div
+                    className="add-comment__pseudo-input-actions"
+                    data-is-action-holder={true}
+                    onClick={onActionsClick}
+                >
                     {props.onCancelClick ?
                         <div className="add-comment__cancel-button" onClick={props.onCancelClick}>
                             <span>Cancel</span>

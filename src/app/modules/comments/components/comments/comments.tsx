@@ -18,7 +18,6 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // 2. Figure out about response tree level (max deep 5 => then flat)
 // 3. After add - scroll to comment or to addComment
 // 4. How many times timeago got registerd and it causes some issues or it handles normaly inside?
-// 5. Fix AddComment button panel width - click for focus
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
