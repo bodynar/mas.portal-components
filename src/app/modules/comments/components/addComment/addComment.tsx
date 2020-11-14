@@ -199,6 +199,8 @@ const AddCommentPseudoInput = (props: AddCommentPseudoInputProps): JSX.Element =
                         </div>
                         : null}
                     <Button
+                        enabled={props.comment.length > 0}
+                        tittle={props.comment.length > 0 ? undefined : "Type something"}
                         className="add-comment__add-button"
                         buttonType={'Primary'}
                         caption={props.btnAddTitle}

@@ -59,6 +59,10 @@
                 border-bottom: 1px dotted red;
             }
         }
+
+        &:hover {
+            color: red;
+        }
     }
 
     &__pseudo-input-mask {
