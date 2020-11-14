@@ -18,7 +18,7 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
         props.responseToId === props.comment.id;
 
     return (
-        <div>
+        <div className="flat-comment">
             <Comment
                 comment={props.comment}
                 onResponseClick={() => props.onResponseClick(props.comment.id)}
@@ -32,6 +32,7 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                     onAddCommentClick={comment => props.onAddCommentClick(comment, props.comment.id)}
                     isResponse={true}
                     onCancelClick={() => props.onResponseClick()}
+                    className="flat-comment__response"
                 />
                 : null
             }
