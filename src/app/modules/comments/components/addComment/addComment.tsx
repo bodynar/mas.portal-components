@@ -57,7 +57,7 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
 
     const onInputHandler = React.useCallback(
         (event: React.FormEvent<HTMLDivElement>): void => {
-            const comment: string = event.currentTarget.innerText.trimEnd();
+            const comment: string = event.currentTarget.innerText.trim();
 
             setState({
                 ...addCommentState,
@@ -70,7 +70,7 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
         (event: React.ClipboardEvent<HTMLDivElement>): void => {
             const clipboardText: string =
                 event.clipboardData.getData("text/plain")
-                    .trimEnd();
+                    .trim();
 
             event.preventDefault();
 
@@ -173,7 +173,7 @@ const AddCommentPseudoInput = (props: AddCommentPseudoInputProps): JSX.Element =
             <div className="add-comment__pseudo-input-container">
                 <div
                     className="add-comment__pseudo-input"
-                    contentEditable="true"
+                    contentEditable={true}
                     onInput={props.onInput}
                     onPaste={props.onPaste}
                     onFocus={() => setIsFocused(true)}
