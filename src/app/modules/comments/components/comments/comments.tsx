@@ -60,18 +60,15 @@ export default function Comments(props: CommentsProps): JSX.Element {
         }
     }, [state]);
 
-    const onAddComment = React.useCallback((comment: CommentItem): void => {
-        setState({
-            ...state,
-            responseToId: undefined,
-            comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
-        });
-    }, [state]);
-
     const onAddCommentClick = React.useCallback((comment: string, responseTo?: string): void => {
         props.onAddCommentClick(comment, responseTo)
-            .then(onAddComment);
-    }, [props, onAddComment]);
+            .then((comment: CommentItem) =>
+                setState({
+                    ...state,
+                    responseToId: undefined,
+                    comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
+                }));
+    }, [props, state]);
 
     const onOrderDirectionToggle = React.useCallback((): void => {
         const newDirection: 'asc' | 'desc' =
@@ -142,48 +139,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
             </section>
         </section>
     );
-
-    // return (
-    //     <section className={`comments-container ${className}`}>
-    //         <AddComment
-    //             isOpen={false}
-    //             onAddCommentClick={(comment: string) => props.onAddCommentClick(comment)}
-    //         />
-    //         <section className="comments">
-    //             {generateCommentsMarkup(props)}
-    //         </section>
-    //     </section>
-    // );
 };
-
-// const generateCommentsMarkup = (props: CommentsProps): JSX.Element => {
-//     if (props.displayCommentsMode === 'flat') {
-//         return (<>
-//             {props.comments.map(comment =>
-//                 <FlatComment
-//                     comment={comment}
-//                     key={comment.id}
-//                 />
-//             )}
-//         </>);
-//     } else {
-//         const mappedComments: Array<ExtendedCommentItem> =
-//             mapCommentsToExtendedModel(props.comments);
-
-//         return (<>
-//             {
-//                 mappedComments.map(comment =>
-//                     <Comment
-//                         key={comment.id}
-//                         comment={comment}
-//                         maxDeepLevel={props.maxDeepLevel}
-//                         onAddCommentClick={(comment, responseTo) => props.onAddCommentClick(comment, responseTo)}
-//                     />
-//                 )
-//             }
-//         </>);
-//     }
-// };
 
 const OrderDirectionSwitch = (props: { orderDirection: 'asc' | 'desc', onIconClick: () => void }): JSX.Element => {
     const tittleCaptionTypeWord: string =
