@@ -17,7 +17,6 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // 1. Options: flat \ tree, when flat - display responseTo with ling to #
 // 2. Figure out about response tree level (max deep 5 => then flat)
 // 3. After add - scroll to comment or to addComment
-// 5. AddComment as Response - add padding\margin
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
