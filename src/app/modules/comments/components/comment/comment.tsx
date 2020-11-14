@@ -43,7 +43,7 @@ export default function Comment(props: CommentProps): JSX.Element {
         >
             <div className="comment__heading">
                 <div className="comment__avatar">
-                    <CommentAvaratar
+                    <CommentAvatar
                         key={props.comment.author.avatar || props.comment.author.initials}
                         displayName={props.comment.author.displayName}
                         initials={props.comment.author.initials}
@@ -97,7 +97,7 @@ export default function Comment(props: CommentProps): JSX.Element {
     );
 };
 
-const CommentAvaratar = (props: { initials: string, displayName: string, avatar?: string }): JSX.Element => {
+const CommentAvatar = (props: { initials: string, displayName: string, avatar?: string }): JSX.Element => {
     if (!isNullOrUndefined(props.avatar)) {
         return (
             <>

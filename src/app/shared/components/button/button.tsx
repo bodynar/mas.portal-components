@@ -15,7 +15,7 @@ export type ButtonProps = {
     enabled?: boolean;
     isOutlined?: boolean;
     className?: string;
-    tittle?: string;
+    title?: string;
 };
 
 const typeClassNameMap: Map<ButtonType, string> =
@@ -50,7 +50,7 @@ export default function Button(props: ButtonProps) {
         <button
             id={id}
             disabled={(!props.enabled) || false}
-            title={props.tittle}
+            title={props.title}
             className={`btn ${className}`}
             onClick={props.onButtonClick}
         >
