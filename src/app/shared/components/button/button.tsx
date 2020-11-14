@@ -46,10 +46,13 @@ export default function Button(props: ButtonProps) {
         className += ` ${props.className}`;
     }
 
+    const isDisabled: boolean =
+        props.enabled === false;
+
     return (
         <button
             id={id}
-            disabled={(!props.enabled) || false}
+            disabled={isDisabled}
             title={props.title}
             className={`btn ${className}`}
             onClick={props.onButtonClick}
