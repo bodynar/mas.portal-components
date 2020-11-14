@@ -281,6 +281,8 @@ export default function CommentsPage(): JSX.Element {
             responseToAuthor: comments.find(x => x.id === responseTo)?.author.displayName
         };
 
+        comments.push(newComment);
+
         return Promise.resolve(newComment);
     };
 
