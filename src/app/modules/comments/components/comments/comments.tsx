@@ -17,7 +17,7 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // 1. Options: flat \ tree, when flat - display responseTo with ling to #
 // 2. Figure out about response tree level (max deep 5 => then flat)
 // 3. After add - scroll to comment or to addComment
-// 4. How many times timeago got registerd and it causes some issues or it handles normaly inside?
+// 5. AddComment as Response - add padding\margin
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
@@ -32,6 +32,7 @@ type CommentsState = {
     orderDirection: 'asc' | 'desc';
     comments: Array<CommentItem>;
     responseToId?: string;
+    isTimeagoDictionaryRegistered: boolean;
 };
 
 export default function Comments(props: CommentsProps): JSX.Element {
@@ -46,7 +47,19 @@ export default function Comments(props: CommentsProps): JSX.Element {
             }) as CommentItem)
             .sort((left, right) => left.date.getTime() - right.date.getTime()),
         orderDirection: 'desc',
+        isTimeagoDictionaryRegistered: false,
     });
+
+    React.useEffect(() => {
+        if (!state.isTimeagoDictionaryRegistered) {
+            timeago.register('en-US--modified', timeAgoCustomDictionary);
+
+            setState({
+                ...state,
+                isTimeagoDictionaryRegistered: true
+            });
+        }
+    }, [state]);
 
     const onAddComment = React.useCallback((comment: CommentItem): void => {
         setState({
@@ -100,8 +113,6 @@ export default function Comments(props: CommentsProps): JSX.Element {
 
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
-
-    timeago.register('en-US--modified', timeAgoCustomDictionary);
 
     return (
         <section className={`comments-container ${className}`}>
