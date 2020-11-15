@@ -16,7 +16,7 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // TODO:
 // 1. Options: flat \ tree, when flat - display responseTo with ling to #
 // 2. Figure out about response tree level (max deep 5 => then flat)
-// 3. After add - scroll to comment or to addComment
+// 3. When hover responseTo => highlight selected comment (bg)
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
@@ -24,6 +24,7 @@ export type CommentsProps = {
     // maxDeepLevel: number;
     // onAddCommentClick: (comment: string, responseTo?: string) => void;
     onAddCommentClick: (comment: string, responseTo?: string) => Promise<CommentItem>;
+    scrollToCommentAfterAdd: boolean;
     className?: string;
 };
 
@@ -62,12 +63,22 @@ export default function Comments(props: CommentsProps): JSX.Element {
 
     const onAddCommentClick = React.useCallback((comment: string, responseTo?: string): void => {
         props.onAddCommentClick(comment, responseTo)
-            .then((comment: CommentItem) =>
+            .then((comment: CommentItem) => {
                 setState({
                     ...state,
                     responseToId: undefined,
                     comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
-                }));
+                });
+
+                if (props.scrollToCommentAfterAdd) {
+                    const targetComment: Element | null =
+                        document.querySelector(`div[data-comment-id="${comment.id}"]`);
+
+                    if (!isNullOrUndefined(targetComment)) {
+                        targetComment.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            })
     }, [props, state]);
 
     const onOrderDirectionToggle = React.useCallback((): void => {
