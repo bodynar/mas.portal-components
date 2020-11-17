@@ -24,7 +24,6 @@ export type CommentsProps = {
     // maxDeepLevel: number;
     // onAddCommentClick: (comment: string, responseTo?: string) => void;
     onAddCommentClick: (comment: string, responseTo?: string) => Promise<CommentItem>;
-    scrollToCommentAfterAdd: boolean;
     className?: string;
 };
 
@@ -61,7 +60,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
         }
     }, [state]);
 
-    const onAddCommentClick = React.useCallback((comment: string, responseTo?: string): void => {
+    const onAddCommentClick = React.useCallback((comment: string, scrollToCommentAfter: boolean, responseTo?: string): void => {
         props.onAddCommentClick(comment, responseTo)
             .then((comment: CommentItem) => {
                 setState({
@@ -70,7 +69,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
                     comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
                 });
 
-                if (props.scrollToCommentAfterAdd) {
+                if (scrollToCommentAfter) {
                     const targetComment: Element | null =
                         document.querySelector(`div[data-comment-id="${comment.id}"]`);
 

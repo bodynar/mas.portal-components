@@ -291,7 +291,6 @@ export default function CommentsPage(): JSX.Element {
         <div style={{ width: '70vw', margin: '5em auto' }}>
             <Comments
                 comments={comments}
-                scrollToCommentAfterAdd={true}
                 // displayCommentsMode={'flat'}
                 // maxDeepLevel={3}
                 onAddCommentClick={onAddCommentClick}

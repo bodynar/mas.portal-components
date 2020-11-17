@@ -9,7 +9,7 @@ import AddComment from '../addComment/addComment';
 
 export type FlatCommentProps = {
     comment: CommentItem;
-    onAddCommentClick: (comment: string, responseTo: string) => void;
+    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
     onResponseClick: (commentId?: string) => void;
     responseToId?: string;
 };
@@ -29,7 +29,7 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                 ? <AddComment
                     isOpen={true}
                     autofocus={false}
-                    onAddCommentClick={comment => props.onAddCommentClick(comment, props.comment.id)}
+                    onAddCommentClick={(comment, needScrollTo) => props.onAddCommentClick(comment, needScrollTo, props.comment.id)}
                     isResponse={true}
                     onCancelClick={() => props.onResponseClick()}
                     className="flat-comment__response"

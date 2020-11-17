@@ -11,7 +11,7 @@ export type AddCommentProps = {
     isOpen: boolean;
     autofocus: boolean;
     isResponse?: boolean;
-    onAddCommentClick: (comment: string) => void;
+    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean) => void;
     onCancelClick?: () => void;
     className?: string;
 };
@@ -35,8 +35,8 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
         ref: React.useRef(null)
     });
 
-    const onAddCommentClick = React.useCallback((): void => {
-        props.onAddCommentClick(addCommentState.comment);
+    const onAddCommentClick = React.useCallback((needScrollTo: boolean): void => {
+        props.onAddCommentClick(addCommentState.comment, needScrollTo);
 
         if (!isNullOrUndefined(addCommentState.ref.current)) {
             addCommentState.ref.current.innerHTML = "";
@@ -133,7 +133,7 @@ type AddCommentPseudoInputProps = {
     btnAddTitle: string;
     pseudoInputRef: React.MutableRefObject<HTMLDivElement | null>;
     onFocus: () => void;
-    onAddCommentClick: () => void;
+    onAddCommentClick: (needScrollTo: boolean) => void;
     onInput: (event: React.FormEvent<HTMLDivElement>) => void;
     onPaste: (event: React.ClipboardEvent<HTMLDivElement>) => void;
     onCancelClick?: () => void;
@@ -188,25 +188,66 @@ const AddCommentPseudoInput = (props: AddCommentPseudoInputProps): JSX.Element =
                     }}
                 >
                 </div>
-                <div
-                    className="add-comment__pseudo-input-actions"
-                    data-is-action-holder={true}
-                    onClick={onActionsClick}
+                <AddCommentActions
+                    {...props}
+                    onActionsClick={onActionsClick}
+                />
+            </div>
+        </div>
+    );
+};
+
+type AddCommentActionsPropsType = {
+    comment: string;
+    btnAddTitle: string;
+    onAddCommentClick: (needScrollTo: boolean) => void;
+    onActionsClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+    onCancelClick?: () => void;
+};
+
+const AddCommentActions = (props: AddCommentActionsPropsType): JSX.Element => {
+    const [needScrollTo, setNeedScrollTo] = React.useState(false);
+
+    const onCheckBoxChange = React.useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) =>
+            setNeedScrollTo(event.target.checked)
+        , []);
+
+    return (
+        <div
+            className="add-comment__pseudo-input-actions"
+            data-is-action-holder={true}
+            onClick={props.onActionsClick}
+        >
+            <div
+                className="add-comment__add-options"
+            >
+                <label
+                    title="Page will be scrolled to your comment"
                 >
-                    {props.onCancelClick ?
-                        <div className="add-comment__cancel-button" onClick={props.onCancelClick}>
-                            <span>Cancel</span>
-                        </div>
-                        : null}
-                    <Button
-                        enabled={props.comment.length > 0}
-                        title={props.comment.length > 0 ? undefined : "Type something"}
-                        className="add-comment__add-button"
-                        buttonType={'Primary'}
-                        caption={props.btnAddTitle}
-                        onButtonClick={() => props.comment.length > 0 ? props.onAddCommentClick() : null}
+                    Show comment after
+                    <input
+                        type="checkbox"
+                        onChange={onCheckBoxChange}
                     />
-                </div>
+                </label>
+            </div>
+            <div
+                className="add-comment__main-actions"
+            >
+                {props.onCancelClick ?
+                    <div className="add-comment__cancel-button" onClick={props.onCancelClick}>
+                        <span>Cancel</span>
+                    </div>
+                    : null}
+                <Button
+                    enabled={props.comment.length > 0}
+                    title={props.comment.length > 0 ? undefined : "Type something"}
+                    className="add-comment__add-button"
+                    buttonType={'Primary'}
+                    caption={props.btnAddTitle}
+                    onButtonClick={() => props.comment.length > 0 ? props.onAddCommentClick(needScrollTo) : null}
+                />
             </div>
         </div>
     );
