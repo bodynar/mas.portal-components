@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import './addComment.scss';
 
@@ -12,8 +12,8 @@ export type AddCommentProps = {
     autofocus: boolean;
     isResponse?: boolean;
     onAddCommentClick: (comment: string, scrollToCommentAfter: boolean) => void;
-    onCancelClick?: () => void;
     className?: string;
+    onCancelClick?: () => void;
 };
 
 type AddCommentState = {
@@ -26,7 +26,7 @@ type AddCommentState = {
 };
 
 export default function AddComment(props: AddCommentProps): JSX.Element {
-    const [addCommentState, setState] = useState<AddCommentState>({
+    const [addCommentState, setState] = React.useState<AddCommentState>({
         uid: generateUid(),
         isOpen: props.isOpen,
         isFocusSetAlready: false,

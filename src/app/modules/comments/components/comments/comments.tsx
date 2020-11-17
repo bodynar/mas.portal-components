@@ -14,14 +14,11 @@ import { mapCommentsToExtendedModel, timeAgoCustomDictionary } from '../../utils
 import CommentItem, { ExtendedCommentItem } from '../../types';
 
 // TODO:
-// 1. Options: flat \ tree, when flat - display responseTo with ling to #
+// 1. Options: flat \ tree
 // 2. Figure out about response tree level (max deep 5 => then flat)
-// 3. When hover responseTo => highlight selected comment (bg)
 
 // TODO (Comment component)
 // - Add comment actions dropwdown menu (with checkbox based)
-// - Figure out about AddComment position, display and events handlex
-// - Add icon response and href
 // - Rename commentState isResponseBlockVisible
 
 export type CommentsProps = {
@@ -105,7 +102,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
 
         if (target.nodeName.toLocaleLowerCase() === "span"
             && !isNullOrUndefined(target.dataset['commentTarget'])) {
-            const commentId: string = target.dataset['commentTarget'];
+            const commentId: string | undefined = target.dataset['commentTarget'];
 
             const targetComment: Element | null =
                 document.querySelector(`div[data-comment-id="${commentId}"]`);
