@@ -12,18 +12,30 @@ export type FlatCommentProps = {
     onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
     onResponseClick: (commentId?: string) => void;
     responseToId?: string;
+    hoveredResponseTo?: string;
+    onResponseToHover?: (commentId?: string) => void;
 };
 export default function FlatComment(props: FlatCommentProps): JSX.Element {
     const isResponseBlockVisible: boolean =
         props.responseToId === props.comment.id;
 
+    const isCommentHovered: boolean =
+        props.comment.id === props.hoveredResponseTo;
+
+    const commentClassName: string =
+        "flat-comment__comment" + (
+            isCommentHovered ? " flat-comment__comment--highlight" : ""
+        );
+
     return (
         <div className="flat-comment">
             <Comment
+                key={props.comment.id}
                 comment={props.comment}
+                className={commentClassName}
                 onResponseClick={() => props.onResponseClick(props.comment.id)}
                 isResponseVisible={isResponseBlockVisible}
-                key={props.comment.id}
+                onResponseToHover={props.onResponseToHover}
             />
             {isResponseBlockVisible
                 ? <AddComment

@@ -1,4 +1,11 @@
 .flat-comment {
+    &__comment {
+        transition: background ease-in-out 0.15s;
+
+        &--highlight {
+            background: rgba(0, 255, 255, 0.1);
+        }
+    }
 
     &__response {
         margin: 0 0.5em 1.5em;

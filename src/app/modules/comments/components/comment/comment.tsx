@@ -5,12 +5,14 @@ import TimeAgo from 'timeago-react';
 import './comment.scss';
 
 import CommentItem from '../../types';
-import { isNullOrUndefined } from '../../../../common/utils';
+import { isNullOrEmpty, isNullOrUndefined } from '../../../../common/utils';
 
 export type CommentProps = {
     comment: CommentItem;
     isResponseVisible: boolean;
     onResponseClick: () => void;
+    className?: string;
+    onResponseToHover?: (commentId?: string) => void;
 };
 
 // type FlatCommentState = {
@@ -19,12 +21,6 @@ export type CommentProps = {
 //     // isActionsToggled: boolean;
 // };
 
-
-// TODO (v1.2)
-// - Add comment actions dropwdown menu (with checkbox based)
-// - Figure out about AddComment position, display and events handlex
-// - Add icon response and href
-// - Rename commentState isResponseBlockVisible
 
 export default function Comment(props: CommentProps): JSX.Element {
     // const [commentState, setState] = React.useState<FlatCommentState>({
@@ -35,9 +31,16 @@ export default function Comment(props: CommentProps): JSX.Element {
 
     // const onActionsToggleClick: () => void = (): void => setState({ ...commentState, isActionsToggled: !commentState.isActionsToggled });
 
+    const className: string =
+        "comment" + (
+            isNullOrEmpty(props.className)
+                ? ""
+                : ` ${props.className}`
+        );
+
     return (
         <div
-            className="comment"
+            className={className}
             key={props.comment.id}
             data-comment-id={props.comment.id}
         >
@@ -73,6 +76,7 @@ export default function Comment(props: CommentProps): JSX.Element {
                         key={props.comment.id + props.comment.responseTo}
                         responseTo={props.comment.responseTo}
                         responseToAuthor={props.comment.responseToAuthor}
+                        onHover={props.onResponseToHover || (() => { })}
                     />
                     {/* <div className="comment__actions">
                         {generateCommentActionsDropdownMenu(commentState.isActionsToggled, onActionsToggleClick)}
@@ -117,7 +121,11 @@ const CommentAvatar = (props: { initials: string, displayName: string, avatar?: 
     }
 };
 
-const ResponseTo = (props: { responseTo?: string, responseToAuthor?: string }): JSX.Element => {
+const ResponseTo = (props: {
+    responseTo?: string,
+    responseToAuthor?: string,
+    onHover: (commentId?: string) => void,
+}): JSX.Element => {
     if (isNullOrUndefined(props.responseTo)) {
         return (<></>);
     } else {
@@ -126,6 +134,8 @@ const ResponseTo = (props: { responseTo?: string, responseToAuthor?: string }): 
                 <span
                     className="gray-color"
                     data-comment-target={props.responseTo}
+                    onMouseOver={() => props.onHover(props.responseTo)}
+                    onMouseOut={() => props.onHover()}
                 >
                     <i className="fas fa-reply"></i> {props.responseToAuthor}
                 </span>

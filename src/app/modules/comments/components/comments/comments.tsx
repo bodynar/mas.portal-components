@@ -18,6 +18,12 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 // 2. Figure out about response tree level (max deep 5 => then flat)
 // 3. When hover responseTo => highlight selected comment (bg)
 
+// TODO (Comment component)
+// - Add comment actions dropwdown menu (with checkbox based)
+// - Figure out about AddComment position, display and events handlex
+// - Add icon response and href
+// - Rename commentState isResponseBlockVisible
+
 export type CommentsProps = {
     comments: Array<CommentItem>;
     // displayCommentsMode: 'flat' | 'tree';
@@ -32,6 +38,7 @@ type CommentsState = {
     comments: Array<CommentItem>;
     responseToId?: string;
     isTimeagoDictionaryRegistered: boolean;
+    hoveredResponseTo?: string;
 };
 
 export default function Comments(props: CommentsProps): JSX.Element {
@@ -117,6 +124,12 @@ export default function Comments(props: CommentsProps): JSX.Element {
             }),
         [state]);
 
+    const onResponseToHover = React.useCallback(
+        (commentId: string | undefined) => setState({
+            ...state,
+            hoveredResponseTo: commentId
+        }), [state]);
+
     const className: string =
         isNullOrUndefined(props.className) ? `` : `comments-container--default`;
 
@@ -144,6 +157,8 @@ export default function Comments(props: CommentsProps): JSX.Element {
                         onAddCommentClick={onAddCommentClick}
                         onResponseClick={onResponseClick}
                         responseToId={state.responseToId}
+                        hoveredResponseTo={state.hoveredResponseTo}
+                        onResponseToHover={onResponseToHover}
                     />
                 )}
             </section>
