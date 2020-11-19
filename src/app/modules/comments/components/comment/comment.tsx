@@ -7,7 +7,7 @@ import './comment.scss';
 import CommentItem from '../../types';
 import { isNullOrEmpty, isNullOrUndefined } from '../../../../common/utils';
 
-export type CommentProps = {
+export type CommentPropsType = {
     comment: CommentItem;
     isResponseVisible: boolean;
     onResponseClick: () => void;
@@ -22,7 +22,7 @@ export type CommentProps = {
 // };
 
 
-export default function Comment(props: CommentProps): JSX.Element {
+export default function Comment(props: CommentPropsType): JSX.Element {
     // const [commentState, setState] = React.useState<FlatCommentState>({
     //     comment: props.comment,
     //     // isResponseBlockVisible: false,

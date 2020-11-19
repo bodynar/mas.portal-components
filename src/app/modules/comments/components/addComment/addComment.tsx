@@ -7,7 +7,7 @@ import generateUid from '../../../../common/uid';
 import Button from '../../../../shared/components/button/button';
 import { isNullOrEmpty, isNullOrUndefined } from '../../../../common/utils';
 
-export type AddCommentProps = {
+export type AddCommentPropsType = {
     isOpen: boolean;
     autofocus: boolean;
     isResponse?: boolean;
@@ -25,7 +25,7 @@ type AddCommentState = {
     ref: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-export default function AddComment(props: AddCommentProps): JSX.Element {
+export default function AddComment(props: AddCommentPropsType): JSX.Element {
     const [addCommentState, setState] = React.useState<AddCommentState>({
         uid: generateUid(),
         isOpen: props.isOpen,

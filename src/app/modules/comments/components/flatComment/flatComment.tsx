@@ -7,15 +7,16 @@ import CommentItem from '../../types';
 import Comment from '../comment/comment';
 import AddComment from '../addComment/addComment';
 
-export type FlatCommentProps = {
+export type FlatCommentPropsType = {
     comment: CommentItem;
     onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
     onResponseClick: (commentId?: string) => void;
     responseToId?: string;
     hoveredResponseTo?: string;
     onResponseToHover?: (commentId?: string) => void;
+    children?: React.ReactNode;
 };
-export default function FlatComment(props: FlatCommentProps): JSX.Element {
+export default function FlatComment(props: FlatCommentPropsType): JSX.Element {
     const isResponseBlockVisible: boolean =
         props.responseToId === props.comment.id;
 
@@ -48,6 +49,7 @@ export default function FlatComment(props: FlatCommentProps): JSX.Element {
                 />
                 : null
             }
+            {props.children}
         </div>
     );
 };
