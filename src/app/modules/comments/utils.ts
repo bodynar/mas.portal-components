@@ -2,7 +2,66 @@ import { isNullOrUndefined } from '../../common/utils';
 
 import CommentItem, { ExtendedCommentItem } from './types';
 
-export const mapCommentsToExtendedModel = (comments: Array<CommentItem>): Array<ExtendedCommentItem> => {
+export const sortComments = (
+    orderDirection: 'asc' | 'desc',
+    mode: 'flat' | 'tree',
+    comments: Array<CommentItem> | Array<ExtendedCommentItem>
+): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    const sortFunction =
+        (left: CommentItem, right: CommentItem): number =>
+            orderDirection === 'asc'
+                ? left.date.getTime() - right.date.getTime()
+                : right.date.getTime() - left.date.getTime();
+
+    if (mode === 'flat') {
+        return (comments as Array<CommentItem>).map(x => x).sort(sortFunction);
+    } else {
+        return sortCommentTree(sortFunction, comments as Array<ExtendedCommentItem>);
+    }
+};
+
+export const addComment = (
+    comments: Array<CommentItem> | Array<ExtendedCommentItem>,
+    newComment: CommentItem,
+    orderDirection: 'asc' | 'desc',
+    mode: 'flat' | 'tree'
+): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    if (mode === 'flat') {
+        return orderDirection === 'asc'
+            ? [newComment, ...comments]
+            : [...comments, newComment];
+    } else {
+        if (isNullOrUndefined(newComment.responseTo)) {
+            const updatedNewComment: ExtendedCommentItem = {
+                ...newComment,
+                responses: [],
+                commentLevel: 0,
+                isRepsonsedCollapsed: false
+            };
+
+            return orderDirection === 'asc'
+                ? [updatedNewComment, ...comments]
+                : [...comments, updatedNewComment];
+        } else {
+            return insertCommentToTree(comments as Array<ExtendedCommentItem>, newComment, orderDirection);
+        }
+    }
+};
+
+export const getComments = (mode: 'flat' | 'tree', comments: Array<CommentItem>): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    return mode === 'flat'
+        ? comments.map(x => ({
+            ...x,
+            author: {
+                ...x.author,
+                initials: x.author.initials.substring(0, 2).toUpperCase()
+            }
+        }))
+            .sort((left, right) => left.date.getTime() - right.date.getTime())
+        : mapCommentsToExtendedModel(comments);
+};
+
+const mapCommentsToExtendedModel = (comments: Array<CommentItem>): Array<ExtendedCommentItem> => {
     const result = comments.filter(x => isNullOrUndefined(x.responseTo))
         .map(comment => ({
             ...comment,
@@ -71,4 +130,52 @@ const findParentComment = (parentComments: Array<ExtendedCommentItem>, commentUi
     }
 
     return parentComment;
-}
+};
+
+const insertCommentToTree = (
+    comments: Array<ExtendedCommentItem>,
+    newComment: CommentItem,
+    orderDirection: 'asc' | 'desc',
+): Array<ExtendedCommentItem> => {
+    let result: Array<ExtendedCommentItem> = [];
+
+    for (const comment of comments) {
+        if (comment.id === newComment.responseTo) {
+            const updatedNewComment: ExtendedCommentItem = {
+                ...newComment,
+                responses: [],
+                commentLevel: comment.commentLevel + 1,
+                isRepsonsedCollapsed: false
+            };
+
+            comment.responses =
+                orderDirection === 'asc'
+                    ? [updatedNewComment, ...comment.responses]
+                    : [...comment.responses, updatedNewComment];
+
+            return comments;
+        } else {
+            return insertCommentToTree(comment.responses, newComment, orderDirection);
+        }
+    }
+
+    if (result.length === 0) {
+        throw new Error(`Parent comment "${newComment.responseTo}" not found.`);
+    }
+
+    return result;
+};
+
+const sortCommentTree = (
+    sortFunction: (left: CommentItem, right: CommentItem) => number,
+    comments: Array<ExtendedCommentItem>
+): Array<ExtendedCommentItem> => {
+    const result: Array<ExtendedCommentItem> =
+        comments.map(x => x).sort(sortFunction);
+
+    for (const comment of comments) {
+        comment.responses = [...sortCommentTree(sortFunction, comment.responses)];
+    }
+
+    return result;
+};
