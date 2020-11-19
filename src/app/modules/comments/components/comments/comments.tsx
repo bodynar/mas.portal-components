@@ -9,13 +9,18 @@ import { isNullOrUndefined } from '../../../../common/utils';
 // import Comment from '../comment/comment';
 import AddComment from '../addComment/addComment';
 import FlatComment from '../flatComment/flatComment';
+import TreeComment from '../treeComment/treeComment';
 
-import { mapCommentsToExtendedModel, timeAgoCustomDictionary } from '../../utils';
+import { addComment, getComments, sortComments, timeAgoCustomDictionary } from '../../utils';
 import CommentItem, { ExtendedCommentItem } from '../../types';
 
 // TODO:
 // 1. Options: flat \ tree
 // 2. Figure out about response tree level (max deep 5 => then flat)
+// 3. Add loadMore options \ async load
+// 4. Add author id into model
+// 5. Add author onHover + onClick events
+// 6. Get current user id to use in dropdown menu => delete comment
 
 // TODO (Comment component)
 // - Add comment actions dropwdown menu (with checkbox based)
@@ -23,8 +28,8 @@ import CommentItem, { ExtendedCommentItem } from '../../types';
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
-    // displayCommentsMode: 'flat' | 'tree';
-    // maxDeepLevel: number;
+    displayMode: 'flat' | 'tree';
+    maxDeepLevel: number;
     // onAddCommentClick: (comment: string, responseTo?: string) => void;
     onAddCommentClick: (comment: string, responseTo?: string) => Promise<CommentItem>;
     className?: string;
@@ -32,7 +37,7 @@ export type CommentsProps = {
 
 type CommentsState = {
     orderDirection: 'asc' | 'desc';
-    comments: Array<CommentItem>;
+    comments: Array<CommentItem> | Array<ExtendedCommentItem>;
     responseToId?: string;
     isTimeagoDictionaryRegistered: boolean;
     hoveredResponseTo?: string;
@@ -40,15 +45,7 @@ type CommentsState = {
 
 export default function Comments(props: CommentsProps): JSX.Element {
     const [state, setState] = React.useState<CommentsState>({
-        comments: props.comments
-            .map(x => ({
-                ...x,
-                author: {
-                    ...x.author,
-                    initials: x.author.initials.substring(0, 2).toUpperCase()
-                }
-            }) as CommentItem)
-            .sort((left, right) => left.date.getTime() - right.date.getTime()),
+        comments: getComments(props.displayMode, props.comments),
         orderDirection: 'desc',
         isTimeagoDictionaryRegistered: false,
     });
@@ -67,10 +64,13 @@ export default function Comments(props: CommentsProps): JSX.Element {
     const onAddCommentClick = React.useCallback((comment: string, scrollToCommentAfter: boolean, responseTo?: string): void => {
         props.onAddCommentClick(comment, responseTo)
             .then((comment: CommentItem) => {
+                const updatedComments: Array<CommentItem> | Array<ExtendedCommentItem> =
+                    addComment(state.comments, comment, state.orderDirection, props.displayMode);
+// TODO: TEST
                 setState({
                     ...state,
                     responseToId: undefined,
-                    comments: state.orderDirection === 'asc' ? [comment, ...state.comments] : [...state.comments, comment]
+                    comments: updatedComments
                 });
 
                 if (scrollToCommentAfter) {
@@ -88,14 +88,16 @@ export default function Comments(props: CommentsProps): JSX.Element {
         const newDirection: 'asc' | 'desc' =
             state.orderDirection === 'asc' ? 'desc' : 'asc';
 
+// TODO: TEST
+        const comments: Array<CommentItem> | Array<ExtendedCommentItem> =
+            sortComments(newDirection, props.displayMode, state.comments);
+
         setState({
             ...state,
             orderDirection: newDirection,
-            comments: newDirection === 'asc'
-                ? state.comments.map(x => x).sort((left, right) => right.date.getTime() - left.date.getTime())
-                : state.comments.map(x => x).sort((left, right) => left.date.getTime() - right.date.getTime())
+            comments: comments
         });
-    }, [state]);
+    }, [props, state]);
 
     const onResponseToClick = React.useCallback((event: React.MouseEvent<HTMLElement>): void => {
         const target = event.target as HTMLElement;
@@ -114,7 +116,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
     }, []);
 
     const onResponseClick = React.useCallback(
-        (commentId: string | undefined) =>
+        (commentId?: string): void =>
             setState({
                 ...state,
                 responseToId: commentId
@@ -122,7 +124,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
         [state]);
 
     const onResponseToHover = React.useCallback(
-        (commentId: string | undefined) => setState({
+        (commentId: string | undefined): void => setState({
             ...state,
             hoveredResponseTo: commentId
         }), [state]);
@@ -147,17 +149,24 @@ export default function Comments(props: CommentsProps): JSX.Element {
                         onIconClick={onOrderDirectionToggle}
                     />
                 </span>
-                {state.comments.map(comment =>
-                    <FlatComment
-                        comment={comment}
-                        key={comment.id}
+                {props.displayMode === 'flat'
+                    ? <FlatComments
+                        comments={state.comments}
+                        hoveredResponseTo={state.hoveredResponseTo}
+                        responseToId={state.responseToId}
                         onAddCommentClick={onAddCommentClick}
                         onResponseClick={onResponseClick}
-                        responseToId={state.responseToId}
-                        hoveredResponseTo={state.hoveredResponseTo}
                         onResponseToHover={onResponseToHover}
                     />
-                )}
+                    : <TreeComments
+                        comments={state.comments as Array<ExtendedCommentItem>}
+                        hoveredResponseTo={state.hoveredResponseTo}
+                        responseToId={state.responseToId}
+                        onAddCommentClick={onAddCommentClick}
+                        onResponseClick={onResponseClick}
+                        onResponseToHover={onResponseToHover}
+                    />
+                }
             </section>
         </section>
     );
@@ -179,4 +188,45 @@ const OrderDirectionSwitch = (props: { orderDirection: 'asc' | 'desc', onIconCli
         title={`${tittleCaptionTypeWord} first`}
         onClick={() => props.onIconClick()}
     ></i>);
+};
+
+const FlatComments = (props: {
+    comments: Array<CommentItem>;
+    responseToId?: string;
+    hoveredResponseTo?: string;
+    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo?: string) => void;
+    onResponseClick: (commentId?: string) => void;
+    onResponseToHover?: (commentId?: string) => void;
+}): JSX.Element => {
+    return (
+        <>
+            {props.comments.map(comment =>
+                <FlatComment
+                    {...props}
+                    comment={comment}
+                    key={comment.id}
+                />
+            )}
+        </>
+    );
+};
+
+const TreeComments = (props: {
+    comments: Array<ExtendedCommentItem>;
+    responseToId?: string;
+    hoveredResponseTo?: string;
+    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo?: string) => void;
+    onResponseClick: (commentId?: string) => void;
+    onResponseToHover?: (commentId?: string) => void;
+}): JSX.Element => {
+    return (
+        <>
+            {props.comments.map(rootComment =>
+                <TreeComment
+                    comment={rootComment}
+                    {...props}
+                />
+            )}
+        </>
+    );
 };
