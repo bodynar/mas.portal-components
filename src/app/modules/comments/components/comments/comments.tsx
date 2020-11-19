@@ -65,7 +65,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
         props.onAddCommentClick(comment, responseTo)
             .then((comment: CommentItem) => {
                 const updatedComments: Array<CommentItem> | Array<ExtendedCommentItem> =
-                    addComment(state.comments, comment, state.orderDirection, props.displayMode);
+                    addComment(state.comments, comment, state.orderDirection, props.displayMode, props.maxDeepLevel);
 // TODO: TEST
                 setState({
                     ...state,

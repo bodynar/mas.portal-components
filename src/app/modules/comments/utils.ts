@@ -24,7 +24,8 @@ export const addComment = (
     comments: Array<CommentItem> | Array<ExtendedCommentItem>,
     newComment: CommentItem,
     orderDirection: 'asc' | 'desc',
-    mode: 'flat' | 'tree'
+    mode: 'flat' | 'tree',
+    maxDeepLevel: number
 ): Array<CommentItem> | Array<ExtendedCommentItem> => {
     if (mode === 'flat') {
         return orderDirection === 'asc'
@@ -43,7 +44,7 @@ export const addComment = (
                 ? [updatedNewComment, ...comments]
                 : [...comments, updatedNewComment];
         } else {
-            return insertCommentToTree(comments as Array<ExtendedCommentItem>, newComment, orderDirection);
+            return insertCommentToTree(comments as Array<ExtendedCommentItem>, newComment, orderDirection, maxDeepLevel);
         }
     }
 };
@@ -136,6 +137,7 @@ const insertCommentToTree = (
     comments: Array<ExtendedCommentItem>,
     newComment: CommentItem,
     orderDirection: 'asc' | 'desc',
+    maxDeepLevel: number,
 ): Array<ExtendedCommentItem> => {
     let result: Array<ExtendedCommentItem> = [];
 
@@ -148,14 +150,30 @@ const insertCommentToTree = (
                 isRepsonsedCollapsed: false
             };
 
-            comment.responses =
-                orderDirection === 'asc'
-                    ? [updatedNewComment, ...comment.responses]
-                    : [...comment.responses, updatedNewComment];
+            if ((comment.commentLevel + 1) <= maxDeepLevel) {
+                comment.responses =
+                    orderDirection === 'asc'
+                        ? [updatedNewComment, ...comment.responses]
+                        : [...comment.responses, updatedNewComment];
 
-            return comments;
+                return comments;
+            } else {
+                const parentComment: ExtendedCommentItem | undefined =
+                    findParentComment(comments, comment.responseTo!);
+
+                if (!isNullOrUndefined(parentComment)) {
+                    parentComment.responses =
+                        orderDirection === 'asc'
+                            ? [updatedNewComment, ...parentComment.responses]
+                            : [...parentComment.responses, updatedNewComment];
+
+                    return comments;
+                } else {
+                    throw new Error(`Parent comment "${comment.responseTo}" not found for existing comment "${comment.id}".`);
+                }
+            }
         } else {
-            return insertCommentToTree(comment.responses, newComment, orderDirection);
+            return insertCommentToTree(comment.responses, newComment, orderDirection, maxDeepLevel);
         }
     }
 
