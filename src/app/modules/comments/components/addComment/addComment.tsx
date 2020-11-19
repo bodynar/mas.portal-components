@@ -46,6 +46,7 @@ export default function AddComment(props: AddCommentProps): JSX.Element {
             ...addCommentState,
             comment: '',
             hideMask: false,
+            isOpen: false,
         });
     }, [addCommentState, props]);
 
