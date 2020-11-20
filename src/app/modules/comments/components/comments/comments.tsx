@@ -30,7 +30,6 @@ export type CommentsProps = {
     comments: Array<CommentItem>;
     displayMode: 'flat' | 'tree';
     maxDeepLevel: number;
-    // onAddCommentClick: (comment: string, responseTo?: string) => void;
     onAddCommentClick: (comment: string, responseTo?: string) => Promise<CommentItem>;
     className?: string;
 };
