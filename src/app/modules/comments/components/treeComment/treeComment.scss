@@ -1,0 +1,41 @@
+.tree-comments {
+    position: relative;
+    padding: 0 0.8em;
+
+    &__show-comments {
+        font-size: 0.9em;
+        color: rgb(64, 134, 224);
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+            color: rgb(252, 0, 0);
+        }
+        &:active {
+            color: rgb(160, 0, 0);
+        }
+    }
+
+    &__replies {
+        padding-left: 1.5em;
+        border-left: 1px dashed #ccc;
+    }
+
+    &__replies-tree-trunk {
+        display: none;
+        position: absolute;
+        width: 32px;
+        height: 100%;
+        left: 0.8em;
+        top: 0;
+        cursor: pointer;
+
+        &:hover {
+            border-left: 2px solid #4086e0;
+        }
+    }
+
+    &:hover &__replies-tree-trunk {
+        display: block;
+    }
+}

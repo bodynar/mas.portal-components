@@ -14,5 +14,6 @@ export default interface CommentItem {
 export interface ExtendedCommentItem extends CommentItem {
     responses: Array<ExtendedCommentItem>;
     commentLevel: number;
-    isRepsonsedCollapsed?: boolean;
 };
+
+export type OrderDirection = 'asc' | 'desc';

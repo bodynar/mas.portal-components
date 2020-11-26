@@ -281,18 +281,15 @@ export default function CommentsPage(): JSX.Element {
             responseToAuthor: comments.find(x => x.id === responseTo)?.author.displayName
         };
 
-        comments.push(newComment);
-
         return Promise.resolve(newComment);
     };
-
 
     return (
         <div style={{ width: '70vw', margin: '5em auto' }}>
             <Comments
                 comments={comments}
-                // displayCommentsMode={'flat'}
-                // maxDeepLevel={3}
+                displayMode={'tree'}
+                maxDeepLevel={5}
                 onAddCommentClick={onAddCommentClick}
             />
         </div>

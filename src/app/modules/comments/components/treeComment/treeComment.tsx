@@ -1,11 +1,16 @@
 import React from 'react';
+
+import './treeComment.scss';
+
 import { ExtendedCommentItem } from '../../types';
 
 import FlatComment from '../flatComment/flatComment';
 
 export type TreeCommentPropsType = {
     comment: ExtendedCommentItem;
+    collapsedTrunks: Array<string>;
     onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
+    onTrunkToggle: (commentId: string) => void;
     onResponseClick: (commentId?: string) => void;
     responseToId?: string;
     hoveredResponseTo?: string;
@@ -13,9 +18,8 @@ export type TreeCommentPropsType = {
     maxDeepLevel?: number;
 };
 export default function TreeComment(props: TreeCommentPropsType): JSX.Element {
-    const [responseToggleState, setResponseToggleState] = React.useState(false);
-
-    const toggleResponses = React.useCallback(() => setResponseToggleState(!responseToggleState), [responseToggleState]);
+    const isResponsedCollapsed: boolean =
+        props.collapsedTrunks.includes(props.comment.id);
 
     return (
         <FlatComment
@@ -25,7 +29,7 @@ export default function TreeComment(props: TreeCommentPropsType): JSX.Element {
                 {...props}
                 level={props.comment.commentLevel}
                 maxDeepLevel={props.maxDeepLevel || 5}
-                onResponseToggleClick={toggleResponses}
+                isResponsesCollapsed={isResponsedCollapsed}
                 commentResponses={props.comment.responses}
             />
         </FlatComment>
@@ -33,86 +37,52 @@ export default function TreeComment(props: TreeCommentPropsType): JSX.Element {
 };
 
 type CommentResponsesPropsType = TreeCommentPropsType & {
+    isResponsesCollapsed: boolean;
     level: number;
     maxDeepLevel: number;
     commentResponses: Array<ExtendedCommentItem>;
-    onResponseToggleClick: () => void;
 };
-
 const CommentResponses = (props: CommentResponsesPropsType): JSX.Element => {
     if (props.commentResponses.length === 0) {
         return (<></>);
     }
     if (props.level >= props.maxDeepLevel) {
         return (<>
-            {props.commentResponses.map(comment => 
+            {props.commentResponses.map(comment =>
                 <FlatComment
+                    key={comment.id}
                     {...props}
                     {...comment}
-                />    
+                />
             )}
         </>);
     }
 
     return (
-        <h1> h1llo w0rld !</h1>
+        <div className="tree-comments">
+            {props.isResponsesCollapsed
+                ? <span
+                    className="tree-comments__show-comments"
+                    onClick={() => props.onTrunkToggle(props.comment.id)}
+                >
+                    Show comments ({props.commentResponses.length})
+                </span>
+                : <>
+                    <div className="tree-comments__replies">
+                        {props.commentResponses.map(response =>
+                            <TreeComment
+                                key={response.id}
+                                {...props}
+                                comment={response}
+                            />
+                        )}
+                    </div>
+                    <div
+                        className="tree-comments__replies-tree-trunk"
+                        onClick={() => props.onTrunkToggle(props.comment.id)}
+                    />
+                </>
+            }
+        </div>
     );
 };
-
-// const displayResponsesIfExists = (
-//     maxDeepLevel: number,
-//     comment: ExtendedCommentItem,
-//     onTrunkClick: () => void,
-//     if (comment.responses.length === 0) {
-//         return (<></>);
-//     }
-
-//     if (comment.commentLevel >= maxDeepLevel) {
-//         // todo: comment inline
-//         return (
-//             <>
-//                 {comment.responses.map(response =>
-//                     <Comment_old
-//                         key={response.id}
-//                         comment={response}
-//                     />
-//                 )}
-//             </>
-//         );
-//     } else {
-//         let repliesContent: JSX.Element = (<></>);
-
-//         if (comment.isRepsonsedCollapsed) {
-//             repliesContent = (
-//                 <span
-//                     className="comment-container__action comment-container__action--color--blue"
-//                     onClick={onTrunkClick}
-//                 >
-//                     Show comments
-//                 </span>
-//             );
-//         } else {
-//             repliesContent = (
-//                 <>
-//                     <div className="comment-container__replies">
-//                         {comment.responses.map(response =>
-//                             <Comment_old
-//                                 key={response.id}
-//                                 maxDeepLevel={maxDeepLevel}
-//                                 comment={response}
-//                                 onAddCommentClick={onAddCommentClick}
-//                             />
-//                         )}
-//                     </div>
-//                     <div className="comment-container__replies-tree-trunk" onClick={onTrunkClick}></div>
-//                 </>
-//             );
-//         }
-
-//         return (
-//             <div className="comment-container__replies-container">
-//                 {repliesContent}
-//             </div>
-//         );
-//     }
-// };

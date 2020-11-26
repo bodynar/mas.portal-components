@@ -1,85 +1,6 @@
 import { isNullOrUndefined } from '../../common/utils';
 
-import CommentItem, { ExtendedCommentItem } from './types';
-
-export const sortComments = (
-    orderDirection: 'asc' | 'desc',
-    mode: 'flat' | 'tree',
-    comments: Array<CommentItem> | Array<ExtendedCommentItem>
-): Array<CommentItem> | Array<ExtendedCommentItem> => {
-    const sortFunction =
-        (left: CommentItem, right: CommentItem): number =>
-            orderDirection === 'asc'
-                ? left.date.getTime() - right.date.getTime()
-                : right.date.getTime() - left.date.getTime();
-
-    if (mode === 'flat') {
-        return (comments as Array<CommentItem>).map(x => x).sort(sortFunction);
-    } else {
-        return sortCommentTree(sortFunction, comments as Array<ExtendedCommentItem>);
-    }
-};
-
-export const addComment = (
-    comments: Array<CommentItem> | Array<ExtendedCommentItem>,
-    newComment: CommentItem,
-    orderDirection: 'asc' | 'desc',
-    mode: 'flat' | 'tree',
-    maxDeepLevel: number
-): Array<CommentItem> | Array<ExtendedCommentItem> => {
-    if (mode === 'flat') {
-        return orderDirection === 'asc'
-            ? [newComment, ...comments]
-            : [...comments, newComment];
-    } else {
-        if (isNullOrUndefined(newComment.responseTo)) {
-            const updatedNewComment: ExtendedCommentItem = {
-                ...newComment,
-                responses: [],
-                commentLevel: 0,
-                isRepsonsedCollapsed: false
-            };
-
-            return orderDirection === 'asc'
-                ? [updatedNewComment, ...comments]
-                : [...comments, updatedNewComment];
-        } else {
-            return insertCommentToTree(comments as Array<ExtendedCommentItem>, newComment, orderDirection, maxDeepLevel);
-        }
-    }
-};
-
-export const getComments = (mode: 'flat' | 'tree', comments: Array<CommentItem>): Array<CommentItem> | Array<ExtendedCommentItem> => {
-    return mode === 'flat'
-        ? comments.map(x => ({
-            ...x,
-            author: {
-                ...x.author,
-                initials: x.author.initials.substring(0, 2).toUpperCase()
-            }
-        }))
-            .sort((left, right) => left.date.getTime() - right.date.getTime())
-        : mapCommentsToExtendedModel(comments);
-};
-
-const mapCommentsToExtendedModel = (comments: Array<CommentItem>): Array<ExtendedCommentItem> => {
-    const result = comments.filter(x => isNullOrUndefined(x.responseTo))
-        .map(comment => ({
-            ...comment,
-            responses: [],
-            commentLevel: 0,
-            isRepsonsedCollapsed: false
-        }) as ExtendedCommentItem);
-
-    let responseComments: Array<CommentItem> =
-        comments.filter(x => !isNullOrUndefined(x.responseTo));
-
-    do {
-        responseComments = attachResponseComments(result, responseComments);
-    } while (responseComments.length > 0)
-
-    return result;
-};
+import CommentItem, { ExtendedCommentItem, OrderDirection } from './types';
 
 const EN_US = ['second', 'minute', 'hour', 'day', 'week', 'month', 'year'];
 
@@ -96,22 +17,121 @@ export const timeAgoCustomDictionary = (diff: number, idx: number): [string, str
     return [`${diff} ${unit} ago`, `${diff} ${unit} ago`];
 };
 
-const attachResponseComments = (parentComments: Array<ExtendedCommentItem>, responseComments: Array<CommentItem>): Array<CommentItem> => {
+export const sortComments = (
+    orderDirection: OrderDirection,
+    mode: 'flat' | 'tree',
+    comments: Array<CommentItem> | Array<ExtendedCommentItem>
+): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    const sortFunction =
+        (left: CommentItem, right: CommentItem): number =>
+            orderDirection === 'asc'
+                ? right.date.getTime() - left.date.getTime()
+                : left.date.getTime() - right.date.getTime();
+
+    if (mode === 'flat') {
+        return (comments as Array<CommentItem>).map(x => x).sort(sortFunction);
+    } else {
+        return sortCommentTree(sortFunction, comments as Array<ExtendedCommentItem>);
+    }
+};
+
+export const addComment = (
+    comments: Array<CommentItem> | Array<ExtendedCommentItem>,
+    newComment: CommentItem,
+    orderDirection: OrderDirection,
+    mode: 'flat' | 'tree',
+    maxDeepLevel: number
+): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    if (mode === 'flat') {
+        return orderDirection === 'asc'
+            ? [newComment, ...comments]
+            : [...comments, newComment];
+    } else {
+        if (isNullOrUndefined(newComment.responseTo)) {
+            const updatedNewComment: ExtendedCommentItem = {
+                ...newComment,
+                responses: [],
+                commentLevel: 0
+            };
+
+            return orderDirection === 'asc'
+                ? [updatedNewComment, ...comments]
+                : [...comments, updatedNewComment];
+        } else {
+            insertCommentToTree(comments as Array<ExtendedCommentItem>, newComment, orderDirection, maxDeepLevel);
+
+            return comments;
+        }
+    }
+};
+
+export const getComments = (mode: 'flat' | 'tree', maxDeepLevel: number, comments: Array<CommentItem>): Array<CommentItem> | Array<ExtendedCommentItem> => {
+    const mappedComments: Array<CommentItem> | Array<ExtendedCommentItem> =
+        mode === 'flat'
+            ? comments.map(x => ({
+                ...x,
+                author: {
+                    ...x.author,
+                    initials: x.author.initials.substring(0, 2).toUpperCase()
+                }
+            }))
+                .sort((left, right) => left.date.getTime() - right.date.getTime())
+            : mapCommentsToExtendedModel(maxDeepLevel, comments);
+
+    return sortComments('desc', mode, mappedComments);
+};
+
+const mapCommentsToExtendedModel = (maxDeepLevel: number, comments: Array<CommentItem>): Array<ExtendedCommentItem> => {
+    const result = comments.filter(x => isNullOrUndefined(x.responseTo))
+        .map(comment => ({
+            ...comment,
+            responses: [],
+            commentLevel: 0,
+            isRepsonsedCollapsed: false
+        }) as ExtendedCommentItem);
+
+    let responseComments: Array<CommentItem> =
+        comments.filter(x => !isNullOrUndefined(x.responseTo));
+
+    do {
+        responseComments = attachResponseComments(result, responseComments, maxDeepLevel);
+    } while (responseComments.length > 0)
+
+    return result;
+};
+
+const attachResponseComments = (parentComments: Array<ExtendedCommentItem>, responseComments: Array<CommentItem>, maxDeepLevel: number): Array<CommentItem> => {
     const attachedComments: Array<string> = [];
 
     responseComments.forEach(comment => {
-        const parentComment: ExtendedCommentItem | undefined =
+        const responseToComment: ExtendedCommentItem | undefined =
             findParentComment(parentComments, comment.responseTo!);
 
-        if (!isNullOrUndefined(parentComment)) {
-            parentComment.responses.push(({
-                ...comment,
-                responses: [],
-                commentLevel: parentComment.commentLevel + 1,
-                isRepsonsedCollapsed: false
-            }));
+        if (!isNullOrUndefined(responseToComment)) {
+            if ((responseToComment.commentLevel + 1) <= maxDeepLevel) {
+                responseToComment.responses.push(({
+                    ...comment,
+                    responses: [],
+                    commentLevel: responseToComment.commentLevel + 1
+                }));
 
-            attachedComments.push(comment.id);
+                attachedComments.push(comment.id);
+            } else {
+                const parentResponseToComment: ExtendedCommentItem | undefined =
+                    findParentComment(parentComments, responseToComment.responseTo!);
+
+
+                if (isNullOrUndefined(parentResponseToComment)) {
+                    throw new Error(`Parent comment "${comment.responseTo}" not found.`);
+                }
+                parentResponseToComment.responses.push({
+                    ...comment,
+                    responses: [],
+                    commentLevel: parentResponseToComment.commentLevel + 1,
+                });
+
+                attachedComments.push(comment.id);
+            }
         }
     });
 
@@ -124,11 +144,16 @@ const findParentComment = (parentComments: Array<ExtendedCommentItem>, commentUi
 
     if (isNullOrUndefined(parentComment)) {
         parentComments.some(comment => {
-            parentComment = findParentComment(comment.responses, commentUid);
+            parentComment = findParentComment(comment.responses, commentUid, maxDeepLevel);
 
             return !isNullOrUndefined(parentComment);
         });
     }
+
+    // if (!isNullOrUndefined(parentComment) && !isNullOrUndefined(maxDeepLevel)
+    //     && parentComment.commentLevel > maxDeepLevel) {
+    //     parentComment = findParentComment(parentComments, parentComment?.responseTo!, maxDeepLevel);
+    // }
 
     return parentComment;
 };
@@ -136,52 +161,45 @@ const findParentComment = (parentComments: Array<ExtendedCommentItem>, commentUi
 const insertCommentToTree = (
     comments: Array<ExtendedCommentItem>,
     newComment: CommentItem,
-    orderDirection: 'asc' | 'desc',
+    orderDirection: OrderDirection,
     maxDeepLevel: number,
-): Array<ExtendedCommentItem> => {
-    let result: Array<ExtendedCommentItem> = [];
+): void => {
+    const responseToComment: ExtendedCommentItem | undefined =
+        findParentComment(comments, newComment.responseTo!);
 
-    for (const comment of comments) {
-        if (comment.id === newComment.responseTo) {
-            const updatedNewComment: ExtendedCommentItem = {
-                ...newComment,
-                responses: [],
-                commentLevel: comment.commentLevel + 1,
-                isRepsonsedCollapsed: false
-            };
-
-            if ((comment.commentLevel + 1) <= maxDeepLevel) {
-                comment.responses =
-                    orderDirection === 'asc'
-                        ? [updatedNewComment, ...comment.responses]
-                        : [...comment.responses, updatedNewComment];
-
-                return comments;
-            } else {
-                const parentComment: ExtendedCommentItem | undefined =
-                    findParentComment(comments, comment.responseTo!);
-
-                if (!isNullOrUndefined(parentComment)) {
-                    parentComment.responses =
-                        orderDirection === 'asc'
-                            ? [updatedNewComment, ...parentComment.responses]
-                            : [...parentComment.responses, updatedNewComment];
-
-                    return comments;
-                } else {
-                    throw new Error(`Parent comment "${comment.responseTo}" not found for existing comment "${comment.id}".`);
-                }
-            }
-        } else {
-            return insertCommentToTree(comment.responses, newComment, orderDirection, maxDeepLevel);
-        }
-    }
-
-    if (result.length === 0) {
+    if (isNullOrUndefined(responseToComment)) {
         throw new Error(`Parent comment "${newComment.responseTo}" not found.`);
     }
+    else {
+        const updatedNewComment: ExtendedCommentItem = {
+            ...newComment,
+            responses: [],
+            commentLevel: responseToComment.commentLevel + 1
+        };
 
-    return result;
+        if ((responseToComment.commentLevel + 1) <= maxDeepLevel) {
+            responseToComment.responses =
+                orderDirection === 'asc'
+                    ? [updatedNewComment, ...responseToComment.responses]
+                    : [...responseToComment.responses, updatedNewComment];
+        } else {
+            const responseToParentComment: ExtendedCommentItem | undefined =
+                findParentComment(comments, responseToComment.responseTo!);
+            // todo: problem here
+            // if parentResponseToComment level +1 > 5 => issue
+
+            if (isNullOrUndefined(responseToParentComment)) {
+                throw new Error(`Parent comment "${responseToComment.responseTo}" not found.`);
+            } else {
+                updatedNewComment.commentLevel = responseToParentComment.commentLevel + 1;
+
+                responseToParentComment.responses =
+                    orderDirection === 'asc'
+                        ? [updatedNewComment, ...responseToParentComment.responses]
+                        : [...responseToParentComment.responses, updatedNewComment];
+            }
+        }
+    }
 };
 
 const sortCommentTree = (

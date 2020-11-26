@@ -27,12 +27,10 @@ type CommentState = {
 export default function Comment_old(props: CommentProps): JSX.Element {
     const [commentState, setState] = React.useState<CommentState>({
         comment: props.comment,
-        isCollapsed: props.comment.isRepsonsedCollapsed === true
+        isCollapsed: true
     });
 
     const toggleResponses: () => void = (): void => {
-        props.comment.isRepsonsedCollapsed = !commentState.isCollapsed;
-
         setState({
             ...commentState,
             isCollapsed: !commentState.isCollapsed
@@ -86,58 +84,58 @@ const displayResponsesIfExists = (
     comment: ExtendedCommentItem,
     onTrunkClick: () => void,
     onAddCommentClick: (comment: string, responseTo: string) => void): JSX.Element => {
-    if (comment.responses.length === 0) {
+    // if (comment.responses.length === 0) {
         return (<></>);
-    }
+    // }
 
-    if (comment.commentLevel >= maxDeepLevel) {
-        // todo: comment inline
-        return (
-            <>
-                {comment.responses.map(response =>
-                    <Comment_old
-                        key={response.id}
-                        comment={response}
-                        maxDeepLevel={maxDeepLevel}
-                        onAddCommentClick={onAddCommentClick}
-                    />
-                )}
-            </>
-        );
-    } else {
-        let repliesContent: JSX.Element = (<></>);
+    // if (comment.commentLevel >= maxDeepLevel) {
+    //     // todo: comment inline
+    //     return (
+    //         <>
+    //             {comment.responses.map(response =>
+    //                 <Comment_old
+    //                     key={response.id}
+    //                     comment={response}
+    //                     maxDeepLevel={maxDeepLevel}
+    //                     onAddCommentClick={onAddCommentClick}
+    //                 />
+    //             )}
+    //         </>
+    //     );
+    // } else {
+    //     let repliesContent: JSX.Element = (<></>);
 
-        if (comment.isRepsonsedCollapsed) {
-            repliesContent = (
-                <span
-                    className="comment-container__action comment-container__action--color--blue"
-                    onClick={onTrunkClick}
-                >
-                    Show comments
-                </span>
-            );
-        } else {
-            repliesContent = (
-                <>
-                    <div className="comment-container__replies">
-                        {comment.responses.map(response =>
-                            <Comment_old
-                                key={response.id}
-                                maxDeepLevel={maxDeepLevel}
-                                comment={response}
-                                onAddCommentClick={onAddCommentClick}
-                            />
-                        )}
-                    </div>
-                    <div className="comment-container__replies-tree-trunk" onClick={onTrunkClick}></div>
-                </>
-            );
-        }
+    //     if (comment) {
+    //         repliesContent = (
+    //             <span
+    //                 className="comment-container__action comment-container__action--color--blue"
+    //                 onClick={onTrunkClick}
+    //             >
+    //                 Show comments
+    //             </span>
+    //         );
+    //     } else {
+    //         repliesContent = (
+    //             <>
+    //                 <div className="comment-container__replies">
+    //                     {comment.responses.map(response =>
+    //                         <Comment_old
+    //                             key={response.id}
+    //                             maxDeepLevel={maxDeepLevel}
+    //                             comment={response}
+    //                             onAddCommentClick={onAddCommentClick}
+    //                         />
+    //                     )}
+    //                 </div>
+    //                 <div className="comment-container__replies-tree-trunk" onClick={onTrunkClick}></div>
+    //             </>
+    //         );
+    //     }
 
-        return (
-            <div className="comment-container__replies-container">
-                {repliesContent}
-            </div>
-        );
-    }
+    //     return (
+    //         <div className="comment-container__replies-container">
+    //             {repliesContent}
+    //         </div>
+    //     );
+    // }
 };
