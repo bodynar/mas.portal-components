@@ -12,8 +12,10 @@ export default interface CommentItem {
 };
 
 export interface ExtendedCommentItem extends CommentItem {
+    responseIdsInTree: Array<string>;
     responses: Array<ExtendedCommentItem>;
     commentLevel: number;
+    parent?: ExtendedCommentItem;
 };
 
 export type OrderDirection = 'asc' | 'desc';
