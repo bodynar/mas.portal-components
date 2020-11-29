@@ -15,13 +15,11 @@ import { addComment, getComments, sortComments, timeAgoCustomDictionary } from '
 import CommentItem, { ExtendedCommentItem, OrderDirection } from '../../types';
 
 // TODO:
-// 1. Options: flat \ tree
-// 2. Figure out about response tree level (max deep 5 => then flat)
-// 3. Add loadMore options \ async load
-// 4. Add author id into model
-// 5. Add author onHover + onClick events
-// 6. Get current user id to use in dropdown menu => delete comment
-// 7. Figure out about re-getting comments after each shit
+// 1. Add loadMore options \ async load
+// 2. Add author id into model
+// 3. Add author onHover + onClick events
+// 4. Get current user id to use in dropdown menu => delete comment
+// 5. Fix icon click (currently works when clicking on span)
 
 // TODO (Comment component)
 // - Add comment actions dropwdown menu (with checkbox based)
