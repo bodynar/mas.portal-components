@@ -15,15 +15,10 @@ import { addComment, getComments, sortComments, timeAgoCustomDictionary } from '
 import CommentItem, { ExtendedCommentItem, OrderDirection } from '../../types';
 
 // TODO:
-// 1. Add loadMore options \ async load
-// 2. Add author id into model
-// 3. Add author onHover + onClick events
-// 4. Get current user id to use in dropdown menu => delete comment
-// 5. Fix icon click (currently works when clicking on span)
-
-// TODO (Comment component)
-// - Add comment actions dropwdown menu (with checkbox based)
-// - Rename commentState isResponseBlockVisible
+// 1. Styles when window width 620px (e.g.): responses, response block
+// 2. Add author options (onHover + onClick events) - add authorId in model
+// 3. Add comment options (delete comment, report comment, etc)
+// 4. Add loadMore \ async load options
 
 export type CommentsProps = {
     comments: Array<CommentItem>;
@@ -50,7 +45,7 @@ export default function Comments(props: CommentsProps): JSX.Element {
     const maxDeepLevel: number = props.maxDeepLevel || 5;
 
     const [state, setState] = React.useState<CommentsState>({
-        comments: [], // getComments(props.displayMode, maxDeepLevel, props.comments),
+        comments: [],
         orderDirection: 'desc',
         isTimeagoDictionaryRegistered: false,
         collapsedTrunks: [],
