@@ -83,10 +83,10 @@
             cursor: pointer;
             
             &:hover {
-                text-decoration: none;
                 color: rgb(0, 140, 133);
             }
             .fas {
+                pointer-events: none;
                 margin-right: 5px;
             }
         }
