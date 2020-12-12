@@ -145,7 +145,6 @@ const insertCommentToTreeItem = (
     orderDirection: OrderDirection,
     maxDeepLevel: number,
 ): void => {
-    debugger
     const parentComment: ExtendedCommentItem | undefined =
         getParentCommentFromTree(comments, newComment.responseTo!, maxDeepLevel);
 
