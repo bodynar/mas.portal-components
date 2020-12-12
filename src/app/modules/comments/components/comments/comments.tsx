@@ -6,7 +6,6 @@ import './comments.scss';
 
 import { isNullOrUndefined } from '../../../../common/utils';
 
-// import Comment from '../comment/comment';
 import AddComment from '../addComment/addComment';
 import FlatComment from '../flatComment/flatComment';
 import TreeComment from '../treeComment/treeComment';
