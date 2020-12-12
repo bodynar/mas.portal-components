@@ -2,18 +2,13 @@ import React from 'react';
 
 import './flatComment.scss';
 
-import CommentItem from '../../types';
+import CommentItem, { BaseCommentComponentProps } from '../../types';
 
 import Comment from '../comment/comment';
 import AddComment from '../addComment/addComment';
 
-export type FlatCommentPropsType = {
+export type FlatCommentPropsType = BaseCommentComponentProps & {
     comment: CommentItem;
-    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
-    onResponseClick: (commentId?: string) => void;
-    responseToId?: string;
-    hoveredResponseTo?: string;
-    onResponseToHover?: (commentId?: string) => void;
     children?: React.ReactNode;
 };
 export default function FlatComment(props: FlatCommentPropsType): JSX.Element {

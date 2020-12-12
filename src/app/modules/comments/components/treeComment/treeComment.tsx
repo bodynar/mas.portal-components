@@ -2,19 +2,14 @@ import React from 'react';
 
 import './treeComment.scss';
 
-import { ExtendedCommentItem } from '../../types';
+import { BaseCommentComponentProps, ExtendedCommentItem } from '../../types';
 
 import FlatComment from '../flatComment/flatComment';
 
-export type TreeCommentPropsType = {
+export type TreeCommentPropsType = BaseCommentComponentProps & {
     comment: ExtendedCommentItem;
     collapsedTrunks: Array<string>;
-    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
     onTrunkToggle: (commentId: string) => void;
-    onResponseClick: (commentId?: string) => void;
-    responseToId?: string;
-    hoveredResponseTo?: string;
-    onResponseToHover?: (commentId?: string) => void;
     maxDeepLevel?: number;
 };
 export default function TreeComment(props: TreeCommentPropsType): JSX.Element {

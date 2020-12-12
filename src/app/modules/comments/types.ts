@@ -19,3 +19,11 @@ export interface ExtendedCommentItem extends CommentItem {
 };
 
 export type OrderDirection = 'asc' | 'desc';
+
+export type BaseCommentComponentProps = {
+    onAddCommentClick: (comment: string, scrollToCommentAfter: boolean, responseTo: string) => void;
+    onResponseClick: (commentId?: string) => void;
+    responseToId?: string;
+    hoveredResponseTo?: string;
+    onResponseToHover?: (commentId?: string) => void;
+};
