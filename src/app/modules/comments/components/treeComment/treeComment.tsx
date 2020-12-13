@@ -60,7 +60,7 @@ const CommentResponses = (props: CommentResponsesPropsType): JSX.Element => {
                     className="tree-comments__show-comments"
                     onClick={() => props.onTrunkToggle(props.comment.id)}
                 >
-                    Show comments ({props.commentResponses.length})
+                    Show responses ({props.commentResponses.length})
                 </span>
                 : <>
                     <div className="tree-comments__replies">

@@ -295,6 +295,5 @@ export default function CommentsPage(): JSX.Element {
                 onAddCommentClick={onAddCommentClick}
             />
         </div>
-
     );
 };
