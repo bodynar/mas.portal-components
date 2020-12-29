@@ -2,13 +2,14 @@ import React from 'react';
 
 import './sidepanel.scss';
 
-import { isNullOrUndefined } from '../../../common/utils';
 import { getFontColor } from '../../../common/color';
 import generateUid from '../../../common/uid';
 
+import { getBackground } from '../utils';
 import { SidePanelBackground, SidepanelItem } from '../types';
 
 import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
+import { isNullOrUndefined } from '../../../common/utils';
 
 export type SidePanelProps = {
     background: SidePanelBackground;
@@ -18,25 +19,19 @@ export type SidePanelProps = {
     expanded?: boolean;
 };
 
-const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBackground, string>([
-    ['ShadowPurple', '462B45'],
-    ['MidnightBadger', '575965'],
-    ['MarineBlue', '043353'],
-    ['BlueNight', '323846'],
-    ['AmbrosiaIvory', 'FFF4EA'],
-    ['Risotto', 'F7F4E7'],
-    ['JerauPejuang', '762014'],
-    ['MyrtleGreen', '275A53'],
-]);
-
 type SidepanelState = {
     expanded: boolean;
     items: Array<SidepanelItem & { uid: string }>;
     activeItemUid?: string;
 };
 
-// TODO:
-// 2. Active state (selected item)
+/**
+ * TODO:
+ * 
+ * 1. Hover & Active && Selected styles
+ * 2. React-router ???
+ * 3. Custom item container?
+ */
 
 export default function SidePanel(props: SidePanelProps): JSX.Element {
     const [state, setState] = React.useState<SidepanelState>({
@@ -61,7 +56,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
         }, [state, props.onItemClick]);
 
     const backgroundColor: string =
-        `#${backgroundColorMap.get(props.background)}`;
+        `#${getBackground(props.background)}`;
 
     const fontColor: string =
         getFontColor(backgroundColor);
