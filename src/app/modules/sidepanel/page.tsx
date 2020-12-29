@@ -1,8 +1,7 @@
 import React from 'react';
 
+import SidePanel from './component/sidepanel';
 import { SidepanelItem } from './types';
-
-import SidePanel, { SidePanelItem } from './component/sidepanel';
 
 export default function SidePanelPage(): JSX.Element {
     const sidePanelItems: Array<SidepanelItem> =
@@ -38,15 +37,14 @@ export default function SidePanelPage(): JSX.Element {
             <SidePanel
                 background='ShadowPurple'
                 items={sidePanelItems}
-                onItemClick={emptyFn}
             >
-                {generateStuffContent()}
+                <MockConent />
             </SidePanel>
         </div>
     );
 };
 
-const generateStuffContent = (): JSX.Element => {
+const MockConent = (): JSX.Element => {
     return (
         <>
             <div className="alert alert-success" role="alert">
