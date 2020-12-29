@@ -1,30 +1,35 @@
 import React from 'react';
 
-import { emptyFn } from '../../common/utils';
+import { SidepanelItem } from './types';
 
 import SidePanel, { SidePanelItem } from './component/sidepanel';
 
 export default function SidePanelPage(): JSX.Element {
-    const sidePanelItems: Array<SidePanelItem> =
+    const sidePanelItems: Array<SidepanelItem> =
         [
             {
                 name: 'Messaging',
                 icon: 'fax',
+                active: true,
             },
             {
                 name: 'Gamification courses',
+                active: true,
             },
             {
                 name: 'Contacts',
                 icon: 'address-card',
+                active: false,
             },
             {
                 name: 'Snooring',
                 icon: 'bed',
+                active: true,
             },
             {
                 name: 'Courses',
                 icon: 'user-graduate',
+                active: true,
             }
         ];
 

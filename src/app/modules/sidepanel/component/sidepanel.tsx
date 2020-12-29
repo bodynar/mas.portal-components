@@ -6,18 +6,15 @@ import { isNullOrUndefined } from '../../../common/utils';
 import { getFontColor } from '../../../common/color';
 import generateUid from '../../../common/uid';
 
-type SidePanelBackground =
-    'ShadowPurple' | 'MidnightBadger' | 'MarineBlue'
-    | 'BlueNight' | 'AmbrosiaIvory' | 'Risotto' | 'JerauPejuang'
-    | 'MyrtleGreen';
+import { SidePanelBackground, SidepanelItem } from '../types';
 
 import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
 
 export type SidePanelProps = {
     background: SidePanelBackground;
-    items: Array<SidePanelItem>;
+    items: Array<SidepanelItem>;
     children: JSX.Element;
-    onItemClick: (name: string) => void;
+    onItemClick?: (item: SidepanelItem) => void;
     expanded?: boolean;
 };
 
@@ -34,6 +31,7 @@ const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBa
 
 type SidepanelState = {
     expanded: boolean;
+    items: Array<SidepanelItem & { uid: string }>;
     activeItemUid?: string;
 };
 
