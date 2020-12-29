@@ -11,11 +11,7 @@ type SidePanelBackground =
     | 'BlueNight' | 'AmbrosiaIvory' | 'Risotto' | 'JerauPejuang'
     | 'MyrtleGreen';
 
-export type SidePanelItem = {
-    name: string;
-    icon?: string;
-    tooltip?: string;
-};
+import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
 
 export type SidePanelProps = {
     background: SidePanelBackground;
@@ -38,7 +34,7 @@ const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBa
 
 type SidepanelState = {
     expanded: boolean;
-    items: Array<SidePanelItem & { uid: string }>;
+    activeItemUid?: string;
 };
 
 // TODO:
@@ -51,6 +47,20 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
     });
 
     const toggleExpanded = React.useCallback(() => setState({ ...state, expanded: !state.expanded }), [state]);
+    const setActiveItem =
+        React.useCallback((itemUid: string) => {
+            setState({ ...state, activeItemUid: itemUid });
+
+            if (!isNullOrUndefined(props.onItemClick)) {
+                const activeItem: SidepanelItem | undefined =
+                    state.items.find(item => item.uid === state.activeItemUid);
+
+                if (!isNullOrUndefined(activeItem)) {
+                    props.onItemClick(activeItem);
+                }
+            }
+
+        }, [state, props.onItemClick]);
 
     const backgroundColor: string =
         `#${backgroundColorMap.get(props.background)}`;
@@ -69,6 +79,8 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
                     {state.items.map(item =>
                         <SidePanelItem
                             item={item}
+                            onItemClick={setActiveItem}
+                            selected={item.uid === state.activeItemUid}
                         />
                     )}
                 </ul>
@@ -100,29 +112,5 @@ const Expander = (props: { expanded: boolean, onClick: () => void }): JSX.Elemen
                 <i className={`fas fa-angle-double-${iconClassName}`} />
             </div>
         </div>
-    );
-};
-
-const SidePanelItem = (props: { item: SidePanelItem & { uid: string } }): JSX.Element => {
-    const elementClass: string = isNullOrUndefined(props.item.icon) ? ' side-panel__item--no-icon' : '';
-    const iconClass: string = isNullOrUndefined(props.item.icon) ? ' icon--empty' : ` fa-${props.item.icon}`;
-
-    const dataLetter: string | undefined =
-        isNullOrUndefined(props.item.icon)
-            ? props.item.name.toUpperCase().substr(0, 1) : undefined;
-
-    return (
-        <li
-            key={props.item.uid}
-            className={`side-panel__item${elementClass}`}
-        >
-            <i
-                className={`fas${iconClass}`}
-                data-letter={dataLetter}
-            />
-            <span>
-                {props.item.name}
-            </span>
-        </li>
     );
 };

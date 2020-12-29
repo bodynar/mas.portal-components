@@ -1,0 +1,55 @@
+$transition: 0.1s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+
+.side-panel {
+    &__item {
+        font-size: 1.25em;
+        padding: 0.5em 1em;
+        max-height: 2.5em;
+
+        cursor: pointer;
+        user-select: none;
+        text-transform: capitalize;
+
+        transition: 0.125s ease background-color, $transition max-height;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+
+        &--no-icon i.fas {
+            margin-right: 1em;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        &:active {
+            background-color: rgba(0, 0, 0, 0.25);
+        }
+
+        .fas {
+            margin-right: 0.75em;
+            width: 1.5em;
+
+            &.icon--empty::before {
+                content: attr(data-letter);
+                font-size: larger;
+            }
+        }
+
+        span {
+            opacity: 0;
+            transition: $transition opacity;
+        }
+
+        &--selected {
+            background-color: rgba(0, 0, 0, 0.25);
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.3);
+            }
+            &:active {
+                background-color: rgba(0, 0, 0, 0.45);
+            }
+        }
+    }
+}
