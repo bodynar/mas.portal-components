@@ -25,14 +25,6 @@ type SidepanelState = {
     activeItemUid?: string;
 };
 
-/**
- * TODO:
- * 
- * 1. Hover & Active && Selected styles
- * 2. React-router ???
- * 3. Custom item container?
- */
-
 export default function SidePanel(props: SidePanelProps): JSX.Element {
     const [state, setState] = React.useState<SidepanelState>({
         expanded: props.expanded || true,
