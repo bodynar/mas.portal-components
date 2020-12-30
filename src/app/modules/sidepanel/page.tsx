@@ -1,30 +1,34 @@
 import React from 'react';
 
-import { emptyFn } from '../../common/utils';
-
-import SidePanel, { SidePanelItem } from './component/sidepanel';
+import SidePanel from './component/sidepanel';
+import { SidepanelItem } from './types';
 
 export default function SidePanelPage(): JSX.Element {
-    const sidePanelItems: Array<SidePanelItem> =
+    const sidePanelItems: Array<SidepanelItem> =
         [
             {
                 name: 'Messaging',
                 icon: 'fax',
+                active: true,
             },
             {
                 name: 'Gamification courses',
+                active: true,
             },
             {
                 name: 'Contacts',
                 icon: 'address-card',
+                active: false,
             },
             {
                 name: 'Snooring',
                 icon: 'bed',
+                active: true,
             },
             {
                 name: 'Courses',
                 icon: 'user-graduate',
+                active: true,
             }
         ];
 
@@ -33,15 +37,14 @@ export default function SidePanelPage(): JSX.Element {
             <SidePanel
                 background='ShadowPurple'
                 items={sidePanelItems}
-                onItemClick={emptyFn}
             >
-                {generateStuffContent()}
+                <MockConent />
             </SidePanel>
         </div>
     );
 };
 
-const generateStuffContent = (): JSX.Element => {
+const MockConent = (): JSX.Element => {
     return (
         <>
             <div className="alert alert-success" role="alert">
