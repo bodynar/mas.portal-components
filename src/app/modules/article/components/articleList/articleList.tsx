@@ -7,7 +7,11 @@ import { has } from '../../../../common/utils';
 import { ArticleItem, TagItem } from '../../types';
 import { filterArticles } from '../../utils';
 
-export type ArticleListProps = {
+import Checkbox from '../checkbox/checkbox';
+import Article from '../articleItem/articleItem';
+import Search from '../search/search';
+
+type ArticleListProps = {
     items: Array<ArticleItem>;
 };
 
@@ -27,7 +31,7 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
     });
 
     const onDisplayArchievedToggle = React.useCallback(
-        (displayArchieved: boolean) => {
+        (displayArchieved: boolean): void => {
             setState({
                 ...state,
                 displayArchieved: displayArchieved,
@@ -36,7 +40,7 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
         }, [state, props.items]);
 
     const onActiveTagChange = React.useCallback(
-        (tag: TagItem, add: boolean) => {
+        (tag: TagItem, add: boolean): void => {
             let tags: Array<TagItem> = state.activeTags;
 
             if (add) {
@@ -56,8 +60,51 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
             });
         }, [state, props.items]);
 
+    const onSearchQueryChange = React.useCallback(
+        (searchQuery: string): void => {
+            setState({
+                ...state,
+                searchQuery: searchQuery
+            })
+        }, [state]);
+
+    const onSearchClick = React.useCallback(
+        (): void => {
+            setState({
+                ...state,
+                displayedArticles: filterArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery)
+            })
+        }, [state, props.items]);
+
     return (
-        <>
-        </>
+        <section className="article-list">
+            <section className="article-list__filters">
+                {/* <div> */}
+                    {/* SORTING */}
+                    <Search
+                        query={state.searchQuery}
+                        onSearchQueryChange={onSearchQueryChange}
+                        onSearchClick={onSearchClick}
+                    />
+                    <Checkbox
+                        label='Display archieved'
+                        value={state.displayArchieved}
+                        onChange={onDisplayArchievedToggle}
+                    />
+                {/* </div> */}
+                <div>
+                    {/* tags */}
+                </div>
+            </section>
+            <section className="article-list__items">
+                {state.displayedArticles.map(article =>
+                    <Article
+                        key={article.id}
+                        article={article}
+                        onTagClick={tag => onActiveTagChange(tag, true)}
+                    />
+                )}
+            </section>
+        </section>
     );
 }

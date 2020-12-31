@@ -1,0 +1,11 @@
+.article-list {
+    &__filters {
+        padding: 0.5em;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    &__items {
+        padding: 1em 0;
+    }
+}
