@@ -45,7 +45,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
                 }
             }
 
-        }, [state, props.onItemClick]);
+        }, [state, props]);
 
     const backgroundColor: string =
         `#${getBackground(props.background)}`;

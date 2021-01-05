@@ -1,5 +1,3 @@
-import { Stats } from "fs";
-
 export type Author = {
     id: string;
     name: string;

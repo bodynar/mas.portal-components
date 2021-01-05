@@ -28,7 +28,7 @@ export default function SidePanelItem(props: SidePanelItemProps): JSX.Element {
         if (!isNullOrUndefined(props.onItemClick)) {
             props.onItemClick(props.item.uid);
         }
-    }, [props.onItemClick]);
+    }, [props]);
 
     return (
         <li
