@@ -1,0 +1,95 @@
+.dropdown {
+    &__selection {
+        padding: 0.25em 1em;
+        width: 10em;
+
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.75);
+        border-radius: 4px;
+
+        cursor: pointer;
+        user-select: none;
+        text-transform: capitalize;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &--empty {
+            color: rgba(0, 0, 0, 0.5);
+        }
+
+        & > i.fa {
+            margin-left: 0.5em;
+            color: rgba(0, 0, 0, 0.5);
+            transition: 0.1s ease-in color;
+
+            &.fa-angle-down {
+                transition: 0.15s ease-in transform;
+
+                &--rotated {
+                    transform: rotate(180deg);
+                }
+            }
+
+            &:hover {
+                color: rgb(0, 0, 0);
+            }
+        }
+    }
+
+    &__selection-caption {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__items {
+        display: flex;
+        position: absolute;
+        list-style: none;
+        width: fit-content;
+        min-width: 10em;
+        z-index: 999;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+        padding: 0.5em 0;
+        margin-top: 0.125em;
+        opacity: 1;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        max-height: 35vh;
+        overflow-y: auto;
+        box-shadow: 0px 5px 20px 1px rgba(0, 0, 0, 0.35);
+
+        &--hidden {
+            opacity: 0;
+            visibility: collapse;
+            pointer-events: none;
+        }
+
+        & > li {
+            padding: 0.25em 1em;
+            color: #212529;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.3s ease background;
+
+            &:hover {
+                color: #16181b;
+                background-color: rgba(223, 224, 224, 0.5);
+            }
+
+            &[data-selected="true"] {
+                background-color: rgb(227, 242, 253);
+            }
+            &:active {
+                background-color: rgb(197, 230, 255);
+            }
+        }
+    }
+}
