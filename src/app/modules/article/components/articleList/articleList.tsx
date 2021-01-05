@@ -2,14 +2,17 @@ import React from 'react';
 
 import './articleList.scss';
 
-import { has } from '../../../../common/utils';
+import { has, isNullOrUndefined } from '../../../../common/utils';
 
 import { ArticleItem, TagItem } from '../../types';
-import { filterArticles } from '../../utils';
+import { filterAndSortArticles } from '../../utils';
 
 import Checkbox from '../checkbox/checkbox';
 import Article from '../articleItem/articleItem';
 import Search from '../search/search';
+import Dropdown from '../dropdown/dropdown';
+import { SelectableItem, SortOrder } from '../dropdown/types';
+import generateUid from '../../../../common/uid';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;
@@ -20,6 +23,7 @@ type ArticleListState = {
     activeTags: Array<TagItem>;
     displayArchieved: boolean;
     searchQuery: string;
+    sortOrder?: SortOrder<ArticleItem>;
 };
 
 export default function ArticleList(props: ArticleListProps): JSX.Element {
@@ -27,7 +31,8 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
         displayedArticles: props.items,
         activeTags: [],
         displayArchieved: false,
-        searchQuery: ''
+        searchQuery: '',
+        sortOrder: { fieldName: 'postedAt', order: 'desc' }
     });
 
     const onDisplayArchievedToggle = React.useCallback(
@@ -35,28 +40,7 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
             setState({
                 ...state,
                 displayArchieved: displayArchieved,
-                displayedArticles: filterArticles(props.items, displayArchieved, state.activeTags, state.searchQuery)
-            });
-        }, [state, props.items]);
-
-    const onActiveTagChange = React.useCallback(
-        (tag: TagItem, add: boolean): void => {
-            let tags: Array<TagItem> = state.activeTags;
-
-            if (add) {
-                if (!has(tags, tag)) {
-                    tags = [...tags, tag];
-                }
-            } else {
-                if (has(tags, tag)) {
-                    tags = tags.filter(x => x !== tag);
-                }
-            }
-
-            setState({
-                ...state,
-                activeTags: tags,
-                displayedArticles: filterArticles(props.items, state.displayArchieved, tags, state.searchQuery)
+                displayedArticles: filterAndSortArticles(props.items, displayArchieved, state.activeTags, state.searchQuery, state.sortOrder)
             });
         }, [state, props.items]);
 
@@ -72,26 +56,63 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
         (): void => {
             setState({
                 ...state,
-                displayedArticles: filterArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery)
+                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.sortOrder)
             })
+        }, [state, props.items]);
+
+    const onSortOrderChange = React.useCallback(
+        (sortOrder: SortOrder<ArticleItem>): void => {
+            setState({
+                ...state,
+                sortOrder: sortOrder,
+                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, sortOrder)
+            });
+        }, [state, props.items]);
+
+    const onTagAdd = React.useCallback(
+        (tag: TagItem) => {
+            const tags: Array<TagItem> =
+                has(state.activeTags, tag)
+                    ? state.activeTags
+                    : [...state.activeTags, tag];
+
+            setState({
+                ...state,
+                activeTags: tags,
+                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder)
+            });
+        }, [state, props.items]);
+
+    const onTagRemove = React.useCallback(
+        (tag: TagItem) => {
+            const tags: Array<TagItem> =
+                has(state.activeTags, tag)
+                    ? state.activeTags.filter(x => x !== tag)
+                    : state.activeTags;
+
+            setState({
+                ...state,
+                activeTags: tags,
+                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder)
+            });
         }, [state, props.items]);
 
     return (
         <section className="article-list">
             <section className="article-list__filters">
-                {/* <div> */}
-                    {/* SORTING */}
-                    <Search
-                        query={state.searchQuery}
-                        onSearchQueryChange={onSearchQueryChange}
-                        onSearchClick={onSearchClick}
-                    />
-                    <Checkbox
-                        label='Display archieved'
-                        value={state.displayArchieved}
-                        onChange={onDisplayArchievedToggle}
-                    />
-                {/* </div> */}
+                <OrderDropdown
+                    onSortOrderChange={onSortOrderChange}
+                />
+                <Search
+                    query={state.searchQuery}
+                    onSearchQueryChange={onSearchQueryChange}
+                    onSearchClick={onSearchClick}
+                />
+                <Checkbox
+                    label='Display archieved'
+                    value={state.displayArchieved}
+                    onChange={onDisplayArchievedToggle}
+                />
                 <div>
                     {/* tags */}
                 </div>
@@ -101,10 +122,55 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                     <Article
                         key={article.id}
                         article={article}
-                        onTagClick={tag => onActiveTagChange(tag, true)}
+                        onTagClick={onTagAdd}
                     />
                 )}
             </section>
         </section>
     );
 }
+
+const orderOptions: Array<SelectableItem> = [
+    { id: generateUid(), displayValue: 'Date', args: { fieldName: 'postedAt', order: 'desc' } },
+    { id: generateUid(), displayValue: 'Date', args: { fieldName: 'postedAt', order: 'asc' } },
+    { id: generateUid(), displayValue: 'Popularity', args: { fieldName: 'stats.views', order: 'desc' } },
+    { id: generateUid(), displayValue: 'Popularity', args: { fieldName: 'stats.views', order: 'asc' } },
+];
+
+const orderOptionTemplateData: Map<string, string> =
+    new Map(orderOptions.map(({ id }, index) =>
+        [id, index % 2 === 0 ? 'fa-sort-amount-down-alt' : 'fa-sort-amount-up-alt']));
+
+const OrderDropdown = (props: {
+    onSortOrderChange: (sortOrder: SortOrder<ArticleItem>) => void;
+}): JSX.Element => {
+    const displayValueTemplateGenerator = React.useCallback(
+        (item: SelectableItem): JSX.Element => {
+            return (
+                <>
+                    <i className={`fas ${orderOptionTemplateData.get(item.id)}`} aria-hidden="true"></i>{item.displayValue}
+                </>
+            );
+        }, []);
+
+    const onSortOrderChange = React.useCallback
+        ((item?: SelectableItem): void => {
+            if (!isNullOrUndefined(item) && !isNullOrUndefined(item.args)) {
+                props.onSortOrderChange({
+                    fieldName: item.args['fieldName'],
+                    order: item.args['order']
+                });
+            }
+        }, [props]);
+
+    return (
+        <Dropdown
+            caption='Please select'
+            canDeselect={false}
+            items={orderOptions}
+            onItemSelect={onSortOrderChange}
+            selectedItem={orderOptions[0]}
+            displayValueTemplateGenerator={displayValueTemplateGenerator}
+        />
+    );
+};
