@@ -3,7 +3,7 @@ import React from "react";
 
 import { Link, useLocation } from "react-router-dom";
 
-import generateUid from "../../common/uid";
+import generateUid from "@app/utils/uid";
 
 export type MenuItem = {
     name: string;

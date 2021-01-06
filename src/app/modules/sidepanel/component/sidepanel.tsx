@@ -2,16 +2,16 @@ import React from 'react';
 
 import './sidepanel.scss';
 
-import { getFontColor } from '../../../common/color';
-import generateUid from '../../../common/uid';
+import { getFontColor } from '@app/utils/color';
+import generateUid from '@app/utils/uid';
 
 import { getBackground } from '../utils';
 import { SidePanelBackground, SidepanelItem } from '../types';
 
 import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
-import { isNullOrUndefined } from '../../../common/utils';
+import { isNullOrUndefined } from '@app/utils/utils';
 
-export type SidePanelProps = {
+type SidePanelProps = {
     background: SidePanelBackground;
     items: Array<SidepanelItem>;
     children: JSX.Element;

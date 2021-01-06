@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from './utils';
+import { isNullOrUndefined } from '@app/utils/utils';
 
 export function isRgbColor(colorString: string): boolean {
     return colorString.trim().startsWith('rgb');

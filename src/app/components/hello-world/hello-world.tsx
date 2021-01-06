@@ -1,7 +1,7 @@
 import React from 'react';
 
-import generateUid from '../../common/uid';
-import { isNullOrUndefined } from '../../common/utils';
+import generateUid from '@app/utils/uid';
+import { isNullOrUndefined } from '@app/utils/utils';
 
 export default function HelloWorld(): JSX.Element {
     const loremIpsum: string = `

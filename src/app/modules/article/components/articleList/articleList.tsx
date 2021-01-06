@@ -2,7 +2,8 @@ import React from 'react';
 
 import './articleList.scss';
 
-import { has, isNullOrUndefined } from '../../../../common/utils';
+import { has, isNullOrUndefined } from '@app/utils/utils';
+import generateUid from '@app/utils/uid';
 
 import { ArticleItem, TagItem } from '../../types';
 import { filterAndSortArticles } from '../../utils';

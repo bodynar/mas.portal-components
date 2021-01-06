@@ -2,10 +2,10 @@ import React from 'react';
 
 import './sidepanelItem.scss';
 
-import { isNullOrUndefined } from '../../../../common/utils';
+import { isNullOrUndefined } from '@app/utils/utils';
 import { SidepanelItem } from '../../types';
 
-export type SidePanelItemProps = {
+type SidePanelItemProps = {
     item: SidepanelItem & { uid: string };
     selected: boolean;
     onItemClick?: (itemUid: string) => void;

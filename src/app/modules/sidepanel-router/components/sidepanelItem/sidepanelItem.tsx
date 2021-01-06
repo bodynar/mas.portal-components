@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 import './sidepanelItem.scss';
 
-import { isNullOrUndefined } from '../../../../common/utils';
+import { isNullOrUndefined } from '@app/utils/utils';
+
 import { SidepanelItem } from '../../types';
 
 export type SidePanelItemProps = {
@@ -29,7 +30,7 @@ export default function SidePanelItem(props: SidePanelItemProps): JSX.Element {
         if (!isNullOrUndefined(props.onItemClick)) {
             props.onItemClick(props.item.uid);
         }
-    }, [props.onItemClick]);
+    }, [props]);
 
     return (
         <Link
