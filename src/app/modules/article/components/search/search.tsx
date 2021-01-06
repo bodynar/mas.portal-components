@@ -2,7 +2,7 @@ import React from 'react';
 
 import './search.scss';
 
-import { isNullOrUndefined } from '@app/utils/utils';
+import { isNullOrUndefined } from '../../../../common/utils';
 
 type SearchProps = {
     query: string;

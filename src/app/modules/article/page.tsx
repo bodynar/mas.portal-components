@@ -1,6 +1,7 @@
 import React from 'react';
 
-import generateUid from '@app/utils/uid';
+import generateUid from '../../common/uid';
+
 import ArticleList from './components/articleList/articleList';
 
 import { ArticleItem, Author } from './types';

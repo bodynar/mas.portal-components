@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import './app.scss';
 
-import { getMenuItems } from '@app/utils/menu';
-import generateUid from '@app/utils/uid';
+import { getMenuItems } from '../../common/menu';
+import generateUid from '../../common/uid';
 
 import Home from '../home/home';
 import Menu, { MenuItem } from '../menu/menu';

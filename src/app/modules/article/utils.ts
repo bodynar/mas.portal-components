@@ -1,4 +1,4 @@
-import { getValueByPath, hasIn, isNullOrEmpty, isNullOrUndefined } from "@app/utils/utils";
+import { getValueByPath, hasIn, isNullOrEmpty, isNullOrUndefined } from "../../common/utils";
 
 import { ArticleItem } from "./types";
 

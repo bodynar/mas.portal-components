@@ -2,7 +2,8 @@ import React from 'react';
 
 import './sidepanelItem.scss';
 
-import { isNullOrUndefined } from '@app/utils/utils';
+import { isNullOrUndefined } from '../../../../common/utils';
+
 import { SidepanelItem } from '../../types';
 
 type SidePanelItemProps = {

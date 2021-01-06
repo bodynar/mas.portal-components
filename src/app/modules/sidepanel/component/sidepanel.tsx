@@ -2,14 +2,14 @@ import React from 'react';
 
 import './sidepanel.scss';
 
-import { getFontColor } from '@app/utils/color';
-import generateUid from '@app/utils/uid';
+import generateUid from '../../../common/uid';
+import { isNullOrUndefined } from '../../../common/utils';
+import { getFontColor } from '../../../common/color';
 
 import { getBackground } from '../utils';
 import { SidePanelBackground, SidepanelItem } from '../types';
 
 import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
-import { isNullOrUndefined } from '@app/utils/utils';
 
 type SidePanelProps = {
     background: SidePanelBackground;

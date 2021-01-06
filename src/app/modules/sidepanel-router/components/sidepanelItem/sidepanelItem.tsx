@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './sidepanelItem.scss';
 
-import { isNullOrUndefined } from '@app/utils/utils';
+import { isNullOrUndefined } from '../../../../common/utils';
 
 import { SidepanelItem } from '../../types';
 

@@ -2,9 +2,9 @@ import React from 'react';
 
 import './dropdown.scss';
 
-import { isNullOrEmpty, isNullOrUndefined } from '@app/utils/utils';
-import { isDropdownItem } from './utils';
+import { isNullOrEmpty, isNullOrUndefined } from '../../../../common/utils';
 
+import { isDropdownItem } from './utils';
 import { DropdownState, SelectableItem } from './types';
 
 type DropdownProps = {

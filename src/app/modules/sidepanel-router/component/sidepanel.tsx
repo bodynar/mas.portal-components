@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import './sidepanel.scss';
 
-import { getFontColor } from '@app/utils/color';
-import generateUid from '@app/utils/uid';
-import { isNullOrUndefined } from '@app/utils/utils';
+import { getFontColor } from '../../../common/color';
+import { isNullOrUndefined } from '../../../common/utils';
+import generateUid from '../../../common/uid';
 
 import { getBackground } from '../utils';
 import { SidePanelBackground, SidepanelItem } from '../types';

@@ -3,7 +3,7 @@ import React from "react";
 
 import { Link, useLocation } from "react-router-dom";
 
-import generateUid from "@app/utils/uid";
+import generateUid from "../../common/uid";
 
 export type MenuItem = {
     name: string;
@@ -26,7 +26,7 @@ export default function Menu(props: MenuProps = defaultMenuProps): JSX.Element {
             ...menuItem,
             uid: generateUid()
         }));
-    
+
     const { pathname } = useLocation();
 
     return (

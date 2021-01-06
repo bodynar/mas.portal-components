@@ -1,8 +1,8 @@
 import { MenuItem } from "../components/menu/menu";
 
-import HelloWorld from '@app/components/hello-world/hello-world';
-import SidePanelPage from "@app/modules/sidepanel/page";
-import ArticlesPage from '@app/modules/article/page';
+import HelloWorld from "../components/hello-world/hello-world";
+import SidePanelPage from "../modules/sidepanel/page";
+import ArticlesPage from "../modules/article/page";
 
 export const getMenuItems = (): Array<MenuItem> => {
     return [

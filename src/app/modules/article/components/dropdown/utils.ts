@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '@app/utils/utils';
+import { isNullOrUndefined } from "../../../../common/utils";
 
 export const isDropdownItem = (element: HTMLElement): boolean => {
     let result: boolean =
