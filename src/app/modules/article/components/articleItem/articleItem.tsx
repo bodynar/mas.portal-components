@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { ArticleItem, TagItem } from '../../types';
+import { ArticleItem } from '../../types';
+import { TagItem } from '../tags/types';
 
 type ArticleProps = {
     article: ArticleItem;

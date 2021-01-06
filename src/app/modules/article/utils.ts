@@ -1,10 +1,9 @@
 import { getValueByPath, hasIn, isNullOrEmpty, isNullOrUndefined } from "@app/utils/utils";
 
-import { getValueByPath, hasIn, isNullOrEmpty, isNullOrUndefined } from "../../common/utils";
+import { ArticleItem } from "./types";
 
 import { SortOrder } from "./components/dropdown/types";
-
-import { ArticleItem, TagItem } from "./types";
+import { TagItem } from "./components/tags/types";
 
 const defaultArticleComparator = (_: ArticleItem, __: ArticleItem): number => {
     return 1;

@@ -1,3 +1,5 @@
+import { TagItem } from './components/tags/types';
+
 export type Author = {
     id: string;
     name: string;
@@ -8,12 +10,6 @@ export type Statistics = {
     views: number;
     likes: number;
     dislikes: number;
-};
-
-export type TagItem = {
-    id: string;
-    name: string;
-    color: string;
 };
 
 export type ArticleItem = {

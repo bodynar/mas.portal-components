@@ -5,7 +5,7 @@ import './articleList.scss';
 import { has, isNullOrUndefined } from '@app/utils/utils';
 import generateUid from '@app/utils/uid';
 
-import { ArticleItem, TagItem } from '../../types';
+import { ArticleItem } from '../../types';
 import { filterAndSortArticles } from '../../utils';
 
 import Checkbox from '../checkbox/checkbox';
@@ -13,7 +13,8 @@ import Article from '../articleItem/articleItem';
 import Search from '../search/search';
 import Dropdown from '../dropdown/dropdown';
 import { SelectableItem, SortOrder } from '../dropdown/types';
-import generateUid from '../../../../common/uid';
+import { TagItem } from '../tags/types';
+import Tags from '../tags/tags';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;
@@ -115,7 +116,10 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                     onChange={onDisplayArchievedToggle}
                 />
                 <div>
-                    {/* tags */}
+                    <Tags
+                        tags={state.activeTags}
+                        onDelete={onTagRemove}
+                    />
                 </div>
             </section>
             <section className="article-list__items">
