@@ -11,8 +11,8 @@ type DropdownProps = {
     canDeselect: boolean;
     caption: string;
     items: Array<SelectableItem>;
-    selectedItem?: SelectableItem;
     onItemSelect: (item?: SelectableItem) => void;
+    selectedItem?: SelectableItem;
     displayValueTemplateGenerator?: (item: SelectableItem) => JSX.Element;
 };
 
@@ -119,7 +119,10 @@ export default function Dropdown(props: DropdownProps): JSX.Element {
                 className={`dropdown__selection${selectionClassName}`}
                 onClick={toggleOpenState}
             >
-                <div className='dropdown__selection-caption'>
+                <div
+                    className="dropdown__selection-caption"
+                    title={state.selectedItem?.displayValue}
+                >
                     <DropdownCaption
                         caption={props.caption}
                         item={state.selectedItem}
