@@ -8,13 +8,14 @@ import { has, isNullOrUndefined } from '../../../../common/utils';
 import { ArticleItem } from '../../types';
 import { filterAndSortArticles } from '../../utils';
 
-import Checkbox from '../checkbox/checkbox';
-import Article from '../articleItem/articleItem';
-import Search from '../search/search';
-import Dropdown from '../dropdown/dropdown';
-import { SelectableItem, SortOrder } from '../dropdown/types';
+import { SortOrder, SelectableItem } from '../dropdown/types';
 import { TagItem } from '../tags/types';
+
+import Checkbox from '../checkbox/checkbox';
+import Dropdown from '../dropdown/dropdown';
+import Search from '../search/search';
 import Tags from '../tags/tags';
+import Article from '../articleItem/articleItem';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;
@@ -102,19 +103,21 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
     return (
         <section className="article-list">
             <section className="article-list__filters">
-                <OrderDropdown
-                    onSortOrderChange={onSortOrderChange}
-                />
-                <Search
-                    query={state.searchQuery}
-                    onSearchQueryChange={onSearchQueryChange}
-                    onSearchClick={onSearchClick}
-                />
-                <Checkbox
-                    label='Display archieved'
-                    value={state.displayArchieved}
-                    onChange={onDisplayArchievedToggle}
-                />
+                <section>
+                    <OrderDropdown
+                        onSortOrderChange={onSortOrderChange}
+                    />
+                    <Search
+                        query={state.searchQuery}
+                        onSearchQueryChange={onSearchQueryChange}
+                        onSearchClick={onSearchClick}
+                    />
+                    <Checkbox
+                        label='Display archieved'
+                        value={state.displayArchieved}
+                        onChange={onDisplayArchievedToggle}
+                    />
+                </section>
                 <div>
                     <Tags
                         tags={state.activeTags}
