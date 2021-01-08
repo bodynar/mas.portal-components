@@ -1,5 +1,10 @@
 import { TagItem } from './components/tags/types';
 
+export type SortOrder<T> = {
+    fieldName: keyof T;
+    order: 'asc' | 'desc';
+};
+
 export type Author = {
     id: string;
     name: string;

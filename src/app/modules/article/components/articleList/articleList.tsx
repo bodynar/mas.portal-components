@@ -5,10 +5,10 @@ import './articleList.scss';
 import generateUid from '../../../../common/uid';
 import { has, isNullOrUndefined } from '../../../../common/utils';
 
-import { ArticleItem } from '../../types';
+import { ArticleItem, SortOrder } from '../../types';
 import { filterAndSortArticles } from '../../utils';
 
-import { SortOrder, SelectableItem } from '../dropdown/types';
+import { SelectableItem } from '../dropdown/types';
 import { TagItem } from '../tags/types';
 
 import Checkbox from '../checkbox/checkbox';
