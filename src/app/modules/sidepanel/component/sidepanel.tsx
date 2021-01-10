@@ -63,6 +63,7 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
                 <ul className="side-panel__items">
                     {state.items.map(item =>
                         <SidePanelItem
+                            key={item.uid}
                             item={item}
                             onItemClick={setActiveItem}
                             selected={item.uid === state.activeItemUid}

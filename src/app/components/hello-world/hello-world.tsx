@@ -37,7 +37,10 @@ export default function HelloWorld(): JSX.Element {
         <>
             <h1>Hello, world!</h1>
             {state.map(item =>
-                <div id={item.uid}>
+                <div
+                    key={item.uid}
+                    id={item.uid}
+                >
                     <h3>{item.uid}</h3>
                     <p> {item.content} </p>
                     {
