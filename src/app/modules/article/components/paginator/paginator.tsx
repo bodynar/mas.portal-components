@@ -4,13 +4,14 @@ import './paginator.scss';
 
 import { isNullOrEmpty, isNullOrUndefined } from '../../../../common/utils';
 
-import { getPageNumbers, initPageSize, pageSizeOptions, sizeClassNamesMap } from './utils';
+import { getPageNumbers, initNeighborsCount, initPageSize, pageSizeOptions, sizeClassNamesMap } from './utils';
 import { PageInfo, PageSizeOption, PaginatorSize } from './types';
 
 type PaginatorProps = {
     itemsCount: number;
     initPage?: number;
     size?: PaginatorSize;
+    neighborsCount?: number;
     onPageChange: (pageInfo: PageInfo) => void;
 };
 
@@ -99,7 +100,10 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
         }, [state, props]);
 
     const pageNumbers: Array<number> =
-        getPageNumbers(state.currentPage, state.pagesCount);
+        getPageNumbers(state.currentPage, state.pagesCount, props.neighborsCount);
+
+    const shouldShowArrows: boolean =
+        state.pagesCount > (props.neighborsCount || initNeighborsCount) + 1;
 
     const canGoFirstPage: boolean =
         state.currentPage !== 0;
@@ -108,8 +112,8 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
         state.currentPage !== state.pagesCount;
 
     const onFirstPageButtonClick = React.useCallback(
-        () => {
-            if (canGoFirstPage) {
+        (): void => {
+            if (canGoFirstPage && shouldShowArrows) {
                 setState({
                     ...state,
                     currentPage: 0
@@ -121,11 +125,11 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                 });
             }
 
-        }, [canGoFirstPage, state, props]);
+        }, [canGoFirstPage, shouldShowArrows, state, props]);
 
     const onLastPageButtonClick = React.useCallback(
-        () => {
-            if (canGoLastPage) {
+        (): void => {
+            if (canGoLastPage && shouldShowArrows) {
                 setState({
                     ...state,
                     currentPage: state.pagesCount
@@ -137,14 +141,11 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                 });
             }
 
-        }, [canGoLastPage, state, props]);
+        }, [canGoLastPage, shouldShowArrows, state, props]);
 
     if (state.pagesCount === 1) {
         return (<></>);
     }
-
-    const shouldShowArrows: boolean =
-        state.pagesCount > 4;
 
     const sizeClassName: string =
         ` ${sizeClassNamesMap.get(props.size || 'medium') || ''}`.trim();
@@ -178,16 +179,14 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                     className={`paginator__pagination pagination${sizeClassName}`}
                     onClick={onPageNumberClick}
                 >
-                    {shouldShowArrows &&
-                        <li
-                            className={`page-item${canGoFirstPage ? '' : ' disabled'}`}
-                            onClick={onFirstPageButtonClick}
-                        >
-                            <span className="page-link">
-                                <i className="fas fa-angle-double-left"></i>
-                            </span>
-                        </li>
-                    }
+                    <li
+                        className={`page-item${canGoFirstPage && shouldShowArrows ? '' : ' disabled'}`}
+                        onClick={onFirstPageButtonClick}
+                    >
+                        <span className="page-link">
+                            <i className="fas fa-angle-double-left"></i>
+                        </span>
+                    </li>
                     {pageNumbers.map(pageNumber =>
                         <li
                             key={pageNumber}
@@ -201,16 +200,15 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                             </span>
                         </li>
                     )}
-                    {shouldShowArrows &&
-                        <li
-                            className={`page-item${canGoLastPage ? '' : ' disabled'}`}
-                            onClick={onLastPageButtonClick}
-                        >
-                            <span className="page-link">
-                                <i className="fas fa-angle-double-right"></i>
-                            </span>
-                        </li>
-                    }
+                    <li
+                        className={`page-item${canGoLastPage && shouldShowArrows ? '' : ' disabled'}`}
+                        onClick={onLastPageButtonClick}
+                    >
+                        <span className="page-link">
+                            <i className="fas fa-angle-double-right"></i>
+                        </span>
+                    </li>
+
                 </ul>
             </div>
         </section>

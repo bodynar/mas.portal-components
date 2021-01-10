@@ -1,14 +1,16 @@
 import generateUid from "../../../../common/uid";
-import { isNullOrUndefined } from "../../../../common/utils";
 
 import { PageSizeOption, PaginatorSize } from "./types";
 
 export const initPageSize: number = 10;
+export const initNeighborsCount: number = 2;
 
 export const pageSizeOptions: Array<PageSizeOption> = [
 	{ id: generateUid(), size: initPageSize },
 	{ id: generateUid(), size: 25 },
-	{ id: generateUid(), size: 50 }
+	{ id: generateUid(), size: 50 },
+	{ id: generateUid(), size: 75 },
+	{ id: generateUid(), size: 100 }
 ];
 
 export const sizeClassNamesMap: Map<PaginatorSize, string> = new Map([
@@ -58,7 +60,5 @@ export const getPageNumbers = (
 			.filter((_, i) => i !== 0)
 			.filter(x => x >= 0 && x <= pagesCount);
 
-	return [left.pop(), currentPage, right.shift()]
-		.filter(x => !isNullOrUndefined(x))
-		.map(x => x as number);
+	return [...left, currentPage, ...right];
 };
