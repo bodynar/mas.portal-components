@@ -1,0 +1,28 @@
+.paginator {
+    display: flex;
+
+    &__page-size {
+        display: flex;
+        align-items: baseline;
+
+        & > * {
+            margin-right: 0.25em;
+        }
+    }
+    &__page-size-label {
+        color: gray;
+    }
+    &__page-size-selector {
+        color: gray;
+        width: 3em;
+        padding: 0.25em 0.25em;
+        border-color: rgb(222, 226, 230);
+    }
+
+    &__pagination {
+        & .page-item:not(.disabled) {
+            user-select: none;
+            cursor: pointer;
+        }
+    }
+}

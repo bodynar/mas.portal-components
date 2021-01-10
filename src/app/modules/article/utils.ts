@@ -3,6 +3,7 @@ import { getValueByPath, hasIn, isNullOrEmpty, isNullOrUndefined } from "../../c
 import { ArticleItem, SortOrder } from "./types";
 
 import { TagItem } from "./components/tags/types";
+import { PageInfo } from "./components/paginator/types";
 
 const defaultArticleComparator = (_: ArticleItem, __: ArticleItem): number => {
     return 1;
@@ -28,16 +29,23 @@ export const filterAndSortArticles = (
     displayArchieved: boolean,
     activeTags: Array<TagItem>,
     searchQuery: string,
-    sortOrder?: SortOrder<ArticleItem>
+    pageInfo?: PageInfo,
+    sortOrder?: SortOrder<ArticleItem>,
 ): Array<ArticleItem> => {
     const sortComparatorFunc = isNullOrUndefined(sortOrder)
         ? defaultArticleComparator
         : getSortComparatorFunc(sortOrder);
 
+    const startPage: number =
+        isNullOrUndefined(pageInfo)
+            ? 0
+            : pageInfo.start;
+
     return [...items]
         .filter(x => displayArchieved || x.isArchieved)
         .filter(x => activeTags.length === 0 || hasIn(activeTags, x.tags))
         .filter(x => isNullOrEmpty(searchQuery) || x.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .slice(startPage || 0, pageInfo?.end)
         .sort((curr, prev) => sortComparatorFunc(curr, prev))
     ;
 };

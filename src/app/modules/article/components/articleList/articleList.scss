@@ -19,6 +19,10 @@
     &__items {
         padding: 1em 0;
     }
+    &__paginator {
+        display: flex;
+        justify-content: flex-end;
+    }
 
     .dropdown .fas {
         margin-right: 0.5em;

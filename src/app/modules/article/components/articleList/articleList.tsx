@@ -10,12 +10,14 @@ import { filterAndSortArticles } from '../../utils';
 
 import { SelectableItem } from '../dropdown/types';
 import { TagItem } from '../tags/types';
+import { PageInfo } from '../paginator/types';
 
-import Checkbox from '../checkbox/checkbox';
 import Dropdown from '../dropdown/dropdown';
 import Search from '../search/search';
+import Checkbox from '../checkbox/checkbox';
 import Tags from '../tags/tags';
 import Article from '../articleItem/articleItem';
+import Paginator from '../paginator/paginator';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;
@@ -26,6 +28,7 @@ type ArticleListState = {
     activeTags: Array<TagItem>;
     displayArchieved: boolean;
     searchQuery: string;
+    pageInfo?: PageInfo;
     sortOrder?: SortOrder<ArticleItem>;
 };
 
@@ -43,7 +46,7 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
             setState({
                 ...state,
                 displayArchieved: displayArchieved,
-                displayedArticles: filterAndSortArticles(props.items, displayArchieved, state.activeTags, state.searchQuery, state.sortOrder)
+                displayedArticles: filterAndSortArticles(props.items, displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, state.sortOrder)
             });
         }, [state, props.items]);
 
@@ -59,46 +62,63 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
         (): void => {
             setState({
                 ...state,
-                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.sortOrder)
+                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, state.sortOrder)
             })
         }, [state, props.items]);
 
     const onSortOrderChange = React.useCallback(
         (sortOrder: SortOrder<ArticleItem>): void => {
-            setState({
-                ...state,
-                sortOrder: sortOrder,
-                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, sortOrder)
-            });
+            if (!isNullOrUndefined(sortOrder)) {
+                setState({
+                    ...state,
+                    sortOrder: sortOrder,
+                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, sortOrder)
+                });
+            }
         }, [state, props.items]);
 
     const onTagAdd = React.useCallback(
         (tag: TagItem) => {
-            const tags: Array<TagItem> =
-                has(state.activeTags, tag)
-                    ? state.activeTags
-                    : [...state.activeTags, tag];
+            if (!isNullOrUndefined(tag)) {
+                const tags: Array<TagItem> =
+                    has(state.activeTags, tag)
+                        ? state.activeTags
+                        : [...state.activeTags, tag];
 
-            setState({
-                ...state,
-                activeTags: tags,
-                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder)
-            });
+                setState({
+                    ...state,
+                    activeTags: tags,
+                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.pageInfo, state.sortOrder)
+                });
+            }
         }, [state, props.items]);
 
     const onTagRemove = React.useCallback(
         (tag: TagItem) => {
-            const tags: Array<TagItem> =
-                has(state.activeTags, tag)
-                    ? state.activeTags.filter(x => x !== tag)
-                    : state.activeTags;
+            if (!isNullOrUndefined(tag)) {
+                const tags: Array<TagItem> =
+                    has(state.activeTags, tag)
+                        ? state.activeTags.filter(x => x !== tag)
+                        : state.activeTags;
 
-            setState({
-                ...state,
-                activeTags: tags,
-                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder)
-            });
+                setState({
+                    ...state,
+                    activeTags: tags,
+                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.pageInfo, state.sortOrder)
+                });
+            }
         }, [state, props.items]);
+
+    const onPageChange = React.useCallback(
+        (pageInfo: PageInfo): void => {
+            if (!isNullOrUndefined(pageInfo)) {
+                setState({
+                    ...state,
+                    pageInfo: pageInfo,
+                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, pageInfo, state.sortOrder)
+                });
+            }
+        }, [state, props]);
 
     return (
         <section className="article-list">
@@ -134,6 +154,12 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                     />
                 )}
             </section>
+            <div className="article-list__paginator">
+                <Paginator
+                    itemsCount={props.items.length}
+                    onPageChange={onPageChange}
+                />
+            </div>
         </section>
     );
 }
