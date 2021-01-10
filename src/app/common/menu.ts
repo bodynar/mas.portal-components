@@ -2,7 +2,7 @@ import { MenuItem } from "../components/menu/menu";
 
 import HelloWorld from "../components/hello-world/hello-world";
 import SidePanelPage from "../modules/sidepanel/page";
-import ArticlesPage from "../modules/article/page";
+import ArticlesPage from "../modules/articles/page";
 
 export const getMenuItems = (): Array<MenuItem> => {
     return [
