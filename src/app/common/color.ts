@@ -4,7 +4,7 @@ export type RgbColor = {
     red: number;
     green: number;
     blue: number;
-} | undefined;
+};
 
 export function isRgbColor(colorString: string): boolean {
     return colorString.trim().startsWith('rgb');
@@ -12,10 +12,10 @@ export function isRgbColor(colorString: string): boolean {
 
 export function isHexColor(colorString: string): boolean {
     return !isNullOrUndefined(colorString)
-        && /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/i.test(colorString);
+        && /^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/i.test(colorString);
 }
 
-export function getRgbColor(colorString: string): RgbColor {
+export function getRgbColor(colorString: string): RgbColor | undefined {
     if (!isRgbColor(colorString)) {
         return undefined;
     }
@@ -33,7 +33,7 @@ export function getRgbColor(colorString: string): RgbColor {
     };
 }
 
-export function hexToRgb(hexColor: string): RgbColor {
+export function hexToRgb(hexColor: string): RgbColor | undefined {
     if (isNullOrEmpty(hexColor)) {
         return undefined;
     }
@@ -62,9 +62,7 @@ export function getFontColor(colorString: string): string {
         throw new Error("Color string must be defined as non empty string.");
     }
 
-    colorString = normalizeColor(colorString);
-
-    const rgbColor: RgbColor =
+    const rgbColor: RgbColor | undefined =
         isRgbColor(colorString)
             ? getRgbColor(colorString)
             : hexToRgb(colorString);
@@ -86,7 +84,7 @@ export function normalizeColor(colorString: string): string {
         throw new Error("Color string must be defined as non empty string.");
     }
 
-    const rgbColor: RgbColor =
+    const rgbColor: RgbColor | undefined =
         isRgbColor(colorString)
             ? getRgbColor(colorString)
             : hexToRgb(colorString);
