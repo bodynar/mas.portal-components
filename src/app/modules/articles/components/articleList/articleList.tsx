@@ -155,10 +155,12 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                 )}
             </section>
             <div className="article-list__paginator">
+                {state.filteredArticles.length > 0 &&
                 <Paginator
-                    itemsCount={props.items.length}
+                        itemsCount={state.filteredArticles.length}
                     onPageChange={onPageChange}
                 />
+                }
             </div>
         </section>
     );
