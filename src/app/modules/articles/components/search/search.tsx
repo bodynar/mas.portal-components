@@ -38,6 +38,14 @@ export default function Search(props: SearchProps): JSX.Element {
                 }
             }, [props]);
 
+    const onKeyPress =
+        React.useCallback(
+            (event: React.KeyboardEvent<HTMLInputElement>): void => {
+                if (event.key === "Enter" && props.query !== '' && !isNullOrUndefined(props.onSearchClick)) {
+                    props.onSearchClick(props.query);
+                }
+            }, [props]);
+
     return (
         <div className='search'>
             <input
@@ -46,6 +54,7 @@ export default function Search(props: SearchProps): JSX.Element {
                 value={props.query}
                 placeholder={placeholder}
                 onChange={onSearchInputChange}
+                onKeyPress={onKeyPress}
             />
             {displaySerchButton &&
                 <button
