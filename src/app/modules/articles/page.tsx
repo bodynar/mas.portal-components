@@ -41,7 +41,20 @@ export default function ArticlesPage(): JSX.Element {
                     ? `[Arch] ${item.name}`
                     : item.name,
                 isArchieved: index % 4 === 0
-            } as ArticleItem));
+            } as ArticleItem))
+            .map((item, index) => ({
+                ...item,
+                stats: {
+                    views: (item.stats.views * 5) - (index * 2),
+                    likes: (item.stats.likes * 3) - (index * 2),
+                    dislikes: (item.stats.dislikes * 4) - (index * 2)
+                }
+            } as ArticleItem))
+            .map((item, index) => ({
+                ...item,
+                postedAt: new Date(index * 10, 2, 1)
+            } as ArticleItem))
+        ;
     return (
         <>
             <ArticleList
