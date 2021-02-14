@@ -10,15 +10,13 @@ import { filterAndSortArticles, getPageItems } from '../../utils';
 
 import { SelectableItem } from '../dropdown/types';
 import { TagItem } from '../tags/types';
-import { PageInfo } from '../paginator/types';
+import { Paginator, PageInfo, initPageSize } from '../paginator';
 
 import Dropdown from '../dropdown/dropdown';
 import Search from '../search/search';
 import Checkbox from '../checkbox/checkbox';
 import Tags from '../tags/tags';
 import Article from '../articleItem/articleItem';
-import Paginator from '../paginator/paginator';
-import { initPageSize } from '../paginator/utils';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;

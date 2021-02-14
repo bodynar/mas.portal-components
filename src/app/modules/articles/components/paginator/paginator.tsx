@@ -95,6 +95,8 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                         pageSize: pageSizeOption.size,
                         pagesCount: pagesCount
                     }));
+
+                    // TODO: When change current page size: update current page items - resize it also
                 }
             }
         }, [state, props]);
