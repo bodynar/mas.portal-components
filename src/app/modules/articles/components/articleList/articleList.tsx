@@ -6,7 +6,7 @@ import generateUid from '../../../../common/uid';
 import { has, isNullOrUndefined } from '../../../../common/utils';
 
 import { ArticleItem, SortOrder } from '../../types';
-import { filterAndSortArticles } from '../../utils';
+import { filterAndSortArticles, getPageItems } from '../../utils';
 
 import { SelectableItem } from '../dropdown/types';
 import { TagItem } from '../tags/types';
@@ -18,61 +18,94 @@ import Checkbox from '../checkbox/checkbox';
 import Tags from '../tags/tags';
 import Article from '../articleItem/articleItem';
 import Paginator from '../paginator/paginator';
+import { initPageSize } from '../paginator/utils';
 
 type ArticleListProps = {
     items: Array<ArticleItem>;
 };
 
 type ArticleListState = {
-    displayedArticles: Array<ArticleItem>;
+    filteredArticles: Array<ArticleItem>;
+    pageArticles: Array<ArticleItem>;
     activeTags: Array<TagItem>;
     displayArchieved: boolean;
     searchQuery: string;
-    pageInfo?: PageInfo;
+    pageInfo: PageInfo;
     sortOrder?: SortOrder<ArticleItem>;
 };
 
+const defaultPageInfo: PageInfo = { start: 0, end: initPageSize };
+
 export default function ArticleList(props: ArticleListProps): JSX.Element {
+    const filteredArticles: Array<ArticleItem> =
+        filterAndSortArticles(props.items, false, [], '', { fieldName: 'postedAt', order: 'desc' });
+
     const [state, setState] = React.useState<ArticleListState>({
-        displayedArticles: props.items,
         activeTags: [],
         displayArchieved: false,
         searchQuery: '',
-        sortOrder: { fieldName: 'postedAt', order: 'desc' }
+        sortOrder: { fieldName: 'postedAt', order: 'desc' },
+        filteredArticles: filteredArticles,
+        pageInfo: defaultPageInfo,
+        pageArticles: getPageItems(filteredArticles, defaultPageInfo)
     });
 
     const onDisplayArchievedToggle = React.useCallback(
         (displayArchieved: boolean): void => {
+            const filteredArticles: Array<ArticleItem> =
+                filterAndSortArticles(props.items, displayArchieved, state.activeTags, state.searchQuery, state.sortOrder);
+
             setState({
                 ...state,
                 displayArchieved: displayArchieved,
-                displayedArticles: filterAndSortArticles(props.items, displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, state.sortOrder)
+                filteredArticles: filteredArticles,
+                pageArticles: getPageItems(filteredArticles, state.pageInfo),
             });
         }, [state, props.items]);
 
     const onSearchQueryChange = React.useCallback(
         (searchQuery: string): void => {
-            setState({
-                ...state,
-                searchQuery: searchQuery
-            })
-        }, [state]);
+            if (state.searchQuery.length > 0 && searchQuery.length === 0) {
+                const filteredArticles: Array<ArticleItem> =
+                    filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, searchQuery, state.sortOrder);
+
+                setState({
+                    ...state,
+                    searchQuery: searchQuery,
+                    filteredArticles: filteredArticles,
+                    pageArticles: getPageItems(filteredArticles, state.pageInfo)
+                });
+            } else {
+                setState({
+                    ...state,
+                    searchQuery: searchQuery
+                });
+            }
+        }, [state, props.items]);
 
     const onSearchClick = React.useCallback(
         (): void => {
+            const filteredArticles: Array<ArticleItem> =
+                filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.sortOrder);
+
             setState({
                 ...state,
-                displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, state.sortOrder)
-            })
+                filteredArticles: filteredArticles,
+                pageArticles: getPageItems(filteredArticles, state.pageInfo)
+            });
         }, [state, props.items]);
 
     const onSortOrderChange = React.useCallback(
         (sortOrder: SortOrder<ArticleItem>): void => {
             if (!isNullOrUndefined(sortOrder)) {
+                const filteredArticles: Array<ArticleItem> =
+                    filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, sortOrder);
+
                 setState({
                     ...state,
                     sortOrder: sortOrder,
-                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, state.pageInfo, sortOrder)
+                    filteredArticles: filteredArticles,
+                    pageArticles: getPageItems(filteredArticles, state.pageInfo)
                 });
             }
         }, [state, props.items]);
@@ -85,10 +118,14 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                         ? state.activeTags
                         : [...state.activeTags, tag];
 
+                const filteredArticles: Array<ArticleItem> =
+                    filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder);
+
                 setState({
                     ...state,
                     activeTags: tags,
-                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.pageInfo, state.sortOrder)
+                    filteredArticles: filteredArticles,
+                    pageArticles: getPageItems(filteredArticles, state.pageInfo)
                 });
             }
         }, [state, props.items]);
@@ -101,10 +138,14 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                         ? state.activeTags.filter(x => x !== tag)
                         : state.activeTags;
 
+                const filteredArticles: Array<ArticleItem> =
+                    filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.sortOrder);
+
                 setState({
                     ...state,
                     activeTags: tags,
-                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, tags, state.searchQuery, state.pageInfo, state.sortOrder)
+                    filteredArticles: filteredArticles,
+                    pageArticles: getPageItems(filteredArticles, state.pageInfo)
                 });
             }
         }, [state, props.items]);
@@ -115,10 +156,10 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                 setState({
                     ...state,
                     pageInfo: pageInfo,
-                    displayedArticles: filterAndSortArticles(props.items, state.displayArchieved, state.activeTags, state.searchQuery, pageInfo, state.sortOrder)
+                    pageArticles: getPageItems(state.filteredArticles, pageInfo)
                 });
             }
-        }, [state, props]);
+        }, [state]);
 
     return (
         <section className="article-list">
@@ -146,7 +187,7 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
                 </div>
             </section>
             <section className="article-list__items">
-                {state.displayedArticles.map(article =>
+                {state.pageArticles.map(article =>
                     <Article
                         key={article.id}
                         article={article}
@@ -156,10 +197,10 @@ export default function ArticleList(props: ArticleListProps): JSX.Element {
             </section>
             <div className="article-list__paginator">
                 {state.filteredArticles.length > 0 &&
-                <Paginator
+                    <Paginator
                         itemsCount={state.filteredArticles.length}
-                    onPageChange={onPageChange}
-                />
+                        onPageChange={onPageChange}
+                    />
                 }
             </div>
         </section>

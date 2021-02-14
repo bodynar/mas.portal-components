@@ -29,23 +29,25 @@ export const filterAndSortArticles = (
     displayArchieved: boolean,
     activeTags: Array<TagItem>,
     searchQuery: string,
-    pageInfo?: PageInfo,
     sortOrder?: SortOrder<ArticleItem>,
 ): Array<ArticleItem> => {
     const sortComparatorFunc = isNullOrUndefined(sortOrder)
         ? defaultArticleComparator
         : getSortComparatorFunc(sortOrder);
 
-    const startPage: number =
-        isNullOrUndefined(pageInfo)
-            ? 0
-            : pageInfo.start;
-
     return [...items]
-        .filter(x => displayArchieved || x.isArchieved)
+        .filter(x => displayArchieved || !x.isArchieved)
         .filter(x => activeTags.length === 0 || hasIn(activeTags, x.tags))
         .filter(x => isNullOrEmpty(searchQuery) || x.name.toLowerCase().includes(searchQuery.toLowerCase()))
-        .slice(startPage || 0, pageInfo?.end)
         .sort((curr, prev) => sortComparatorFunc(curr, prev))
     ;
+};
+
+export const getPageItems = (items: Array<ArticleItem>, pageInfo?: PageInfo): Array<ArticleItem> => {
+    if (isNullOrUndefined(pageInfo) || items.length < pageInfo.start
+    ) {
+        return items;
+    }
+
+    return items.slice(pageInfo.start, pageInfo.end);
 };
