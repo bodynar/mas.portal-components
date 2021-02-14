@@ -3,5 +3,7 @@ import Paginator from './paginator';
 import { initPageSize } from './utils';
 
 export {
-    PageInfo, Paginator, initPageSize
+    Paginator, initPageSize
 }
+
+export type { PageInfo };
