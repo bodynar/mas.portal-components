@@ -83,11 +83,10 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                 if (!isNullOrUndefined(pageSizeOption)) {
                     const pagesCount: number =
                         Math.ceil(props.itemsCount / pageSizeOption.size);
-
                     let currentPage: number = state.currentPage;
 
-                    if (pagesCount < currentPage) {
-                        currentPage = pagesCount;
+                    if (pagesCount <= currentPage) {
+                        currentPage = pagesCount - 1;
                     }
 
                     setState(({
@@ -96,7 +95,10 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
                         pagesCount: pagesCount
                     }));
 
-                    // TODO: When change current page size: update current page items - resize it also
+                    props.onPageChange({
+                        start: currentPage * pageSizeOption.size,
+                        end: (currentPage + 1) * pageSizeOption.size
+                    });
                 }
             }
         }, [state, props]);
@@ -111,7 +113,7 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
         state.currentPage !== 0;
 
     const canGoLastPage: boolean =
-        state.currentPage !== state.pagesCount;
+        state.currentPage !== (state.pagesCount - 1);
 
     const onFirstPageButtonClick = React.useCallback(
         (): void => {
@@ -132,13 +134,15 @@ export default function Paginator(props: PaginatorProps): JSX.Element {
     const onLastPageButtonClick = React.useCallback(
         (): void => {
             if (canGoLastPage && shouldShowArrows) {
+                const pageNumber: number = state.pagesCount - 1;
+
                 setState({
                     ...state,
-                    currentPage: state.pagesCount
+                    currentPage: pageNumber
                 });
 
                 props.onPageChange({
-                    start: (state.pagesCount - 1) * state.pageSize,
+                    start: pageNumber * state.pageSize,
                     end: props.itemsCount
                 });
             }
