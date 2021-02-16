@@ -22,7 +22,7 @@ export const sizeClassNamesMap: Map<PaginatorSize, string> = new Map([
 export const getPageNumbers = (
 	currentPage: number,
 	pagesCount: number,
-	neighborsCount: number = 2
+	neighborsCount: number = initNeighborsCount
 ): Array<number> => {
 	if (currentPage > pagesCount) {
 		throw new Error(`Paginator: Current page {${currentPage}} must be lower than pages count {${pagesCount}}.`);
@@ -32,33 +32,39 @@ export const getPageNumbers = (
 		return [];
 	}
 
-	if (currentPage <= 0) {
-		return new Array(neighborsCount + 1)
-			.fill(0)
-			.map((_, i) => i);
-	}
-
-	if (currentPage === pagesCount) {
-		return new Array(neighborsCount + 1)
-			.fill(pagesCount)
-			.map((_, i) => pagesCount - i)
-			.reverse();
-	}
-
 	const left: Array<number> =
-		new Array(neighborsCount + 1)
-			.fill(currentPage)
-			.map((_, i) => currentPage - i)
-			.filter((_, i) => i !== 0)
-			.reverse()
-			.filter(x => x >= 0 && x <= pagesCount);
+		getLeftNumbers(currentPage, neighborsCount);
 
 	const right: Array<number> =
-		new Array(neighborsCount + 1)
-			.fill(currentPage)
-			.map((_, i) => currentPage + i)
-			.filter((_, i) => i !== 0)
-			.filter(x => x >= 0 && x <= pagesCount);
+		getRightNumbers(currentPage, pagesCount - 1, neighborsCount);
 
 	return [...left, currentPage, ...right];
+};
+
+const getLeftNumbers = (max: number, count: number): Array<number> => {
+	const result: Array<number> = [];
+
+	if (max <= 0 || count <= 0) {
+		return result;
+	}
+
+	for (let i = max - 1; i >= 0 && count > 0; i--, count--) {
+		result.push(i);
+	}
+
+	return result.reverse();
+};
+
+const getRightNumbers = (min: number, max: number, count: number): Array<number> => {
+	const result: Array<number> = [];
+
+	if (max <= 0 || max === min || min >= max || count <= 0) {
+		return result;
+	}
+
+	for (let i = min + 1; i <= max && count > 0; i++, count--) {
+		result.push(i);
+	}
+
+	return result;
 };
