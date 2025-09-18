@@ -2,48 +2,28 @@ import React from 'react';
 
 import './sidepanel.scss';
 
-import { isNullOrUndefined } from '../../../common/utils';
 import { getFontColor } from '../../../common/color';
 import generateUid from '../../../common/uid';
 
-type SidePanelBackground =
-    'ShadowPurple' | 'MidnightBadger' | 'MarineBlue'
-    | 'BlueNight' | 'AmbrosiaIvory' | 'Risotto' | 'JerauPejuang'
-    | 'MyrtleGreen';
+import { getBackground } from '../utils';
+import { SidePanelBackground, SidepanelItem } from '../types';
 
-export type SidePanelItem = {
-    name: string;
-    icon?: string;
-    tooltip?: string;
-};
+import SidePanelItem from '../components/sidepanelItem/sidepanelItem';
+import { isNullOrUndefined } from '../../../common/utils';
 
 export type SidePanelProps = {
     background: SidePanelBackground;
-    items: Array<SidePanelItem>;
+    items: Array<SidepanelItem>;
     children: JSX.Element;
-    onItemClick: (name: string) => void;
+    onItemClick?: (item: SidepanelItem) => void;
     expanded?: boolean;
 };
 
-const backgroundColorMap: Map<SidePanelBackground, string> = new Map<SidePanelBackground, string>([
-    ['ShadowPurple', '462B45'],
-    ['MidnightBadger', '575965'],
-    ['MarineBlue', '043353'],
-    ['BlueNight', '323846'],
-    ['AmbrosiaIvory', 'FFF4EA'],
-    ['Risotto', 'F7F4E7'],
-    ['JerauPejuang', '762014'],
-    ['MyrtleGreen', '275A53'],
-]);
-
 type SidepanelState = {
     expanded: boolean;
-    items: Array<SidePanelItem & { uid: string }>;
+    items: Array<SidepanelItem & { uid: string }>;
+    activeItemUid?: string;
 };
-
-// TODO:
-// 1. Scrollbar (many items)
-// 2. Active state (selected item)
 
 export default function SidePanel(props: SidePanelProps): JSX.Element {
     const [state, setState] = React.useState<SidepanelState>({
@@ -51,10 +31,24 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
         items: props.items.map(x => ({ ...x, uid: generateUid() }))
     });
 
-    const toggleExpanded: () => void = () => setState({ ...state, expanded: !state.expanded });
+    const toggleExpanded = React.useCallback(() => setState({ ...state, expanded: !state.expanded }), [state]);
+    const setActiveItem =
+        React.useCallback((itemUid: string) => {
+            setState({ ...state, activeItemUid: itemUid });
+
+            if (!isNullOrUndefined(props.onItemClick)) {
+                const activeItem: SidepanelItem | undefined =
+                    state.items.find(item => item.uid === state.activeItemUid);
+
+                if (!isNullOrUndefined(activeItem)) {
+                    props.onItemClick(activeItem);
+                }
+            }
+
+        }, [state, props.onItemClick]);
 
     const backgroundColor: string =
-        `#${backgroundColorMap.get(props.background)}`;
+        `#${getBackground(props.background)}`;
 
     const fontColor: string =
         getFontColor(backgroundColor);
@@ -67,9 +61,18 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
             <aside className="side-panel__panel" style={{ backgroundColor: backgroundColor, color: fontColor }}>
                 <hr style={{ borderTopColor: fontColor }} />
                 <ul className="side-panel__items">
-                    {state.items.map(item => generateSidePanelItem(item))}
+                    {state.items.map(item =>
+                        <SidePanelItem
+                            item={item}
+                            onItemClick={setActiveItem}
+                            selected={item.uid === state.activeItemUid}
+                        />
+                    )}
                 </ul>
-                {generateExpander(state.expanded, toggleExpanded)}
+                <Expander
+                    expanded={state.expanded}
+                    onClick={toggleExpanded}
+                />
             </aside>
             <main className="side-panel__content-container">
                 <div className="side-panel__side-content">
@@ -80,31 +83,19 @@ export default function SidePanel(props: SidePanelProps): JSX.Element {
     );
 };
 
-const generateExpander = (expanded: boolean, clickHandler: () => void): JSX.Element => {
-    const content: JSX.Element =
-        expanded
-            ? (<div className="side-panel__expander-menu" onClick={clickHandler}>
-                <span>Collapse</span>
-                <i className="fas fa-angle-double-left" />
-            </div>)
-            : (<div className="side-panel__expander-menu" onClick={clickHandler}>
-                <i className="fas fa-angle-double-right" />
-            </div>);
+const Expander = (props: { expanded: boolean, onClick: () => void }): JSX.Element => {
+    const iconClassName: string =
+        props.expanded ? 'left' : 'right';
 
     return (
-        <div className="side-panel__expander" onClick={clickHandler}>
-            {content}
-        </div>);
-};
-
-const generateSidePanelItem = (item: SidePanelItem & { uid: string }): JSX.Element => {
-    const elementClass: string = isNullOrUndefined(item.icon) ? ' side-panel__item--no-icon' : '';
-    const iconClass: string = isNullOrUndefined(item.icon) ? ' icon--empty' : ` fa-${item.icon}`;
-
-    return (
-        <li key={item.uid} data-key={item.uid} className={`side-panel__item${elementClass}`}>
-            <i className={`fas${iconClass}`} data-letter={item.name.toUpperCase().substr(0, 1)} />
-            <span>{item.name}</span>
-        </li>
+        <div className="side-panel__expander" onClick={props.onClick}>
+            <div className="side-panel__expander-menu">
+                {props.expanded
+                    ? <span>Collapse</span>
+                    : <></>
+                }
+                <i className={`fas fa-angle-double-${iconClassName}`} />
+            </div>
+        </div>
     );
 };
